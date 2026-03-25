@@ -2,29 +2,23 @@ import streamlit as st
 from logic.actions import capture_link
 
 def display_sidebar():
-    """
-    Renders the sidebar and returns the uploaded files and action triggers.
-    """
     with st.sidebar:
         st.title("Settings & Uploads")
         
-        # 1. File Uploaders
         excel_file = st.file_uploader("Upload Excel", type=["xlsx", "xlsm"])
         pdf_file = st.file_uploader("Upload PDF", type="pdf")
         
         st.divider()
         
-        # 2. Capture Action
-        if st.button("🔗 Capture & Link Selection", width="stretch"):
+        # FIX: Use use_container_width=True for modern Streamlit
+        if st.button("🔗 Capture & Link Selection", use_container_width=True):
             editor_event = st.session_state.get('editor_event')
-            active_sel = st.session_state.get('active_selection')
     
-            if editor_event is not None or active_sel is not None:
+            if editor_event is not None:
                 capture_link(editor_event, st.session_state.get('current_page', 0), pdf_file)
             else:
                 st.sidebar.warning("Select an Excel cell first.")
         
-        # --- ALL CONTENT MUST BE ABOVE THE RETURN ---
         st.divider()
         with st.expander("🔍 Developer Debug"):
             st.write("Current Page:", st.session_state.get('current_page'))
@@ -36,9 +30,8 @@ def display_sidebar():
                 for cell, link in st.session_state.links.items():
                     st.write(f"**{cell}** → Page {link.page_index + 1}")
 
-        if st.button("🗑️ Clear Cache", width="stretch"):
+        if st.button("🗑️ Clear Cache", use_container_width=True):
             st.cache_data.clear()
             st.success("Cache cleared!")
 
-    # THE RETURN MUST BE THE VERY LAST LINE
     return excel_file, pdf_file

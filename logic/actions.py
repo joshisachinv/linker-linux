@@ -3,20 +3,19 @@ from models.pdf_link import PdfLink
 from logic.cell_addr import cell_address
 
 def capture_link(excel_selection, current_page, pdf_file):
-    # 1. Access the modern selection dictionary
-    # excel_selection comes directly from the 'event' in excel_view.py
+    # 1. Access the modern selection dictionary directly from the event
     selection = excel_selection.get("selection", {})
     cells = selection.get("cells", [])
 
     # 2. Check if a cell was actually clicked
     if not cells:
-        st.sidebar.error("❌ Click a cell in the Excel table first!")
+        st.sidebar.error("❌ Please click a cell in the Excel table first!")
         return False
 
-    # 3. Extract indices: cells[0] is [row_index, col_index]
+    # 3. Extract indices: cells[0] is exactly [row_index, col_index]
     row_idx, col_idx = cells[0]
     
-    # 4. Convert to Excel Address (e.g., 0,0 -> A1)
+    # 4. Convert to Excel Address
     addr = cell_address(row_idx, col_idx)
     pdf_name = pdf_file.name if pdf_file else "Unknown.pdf"
 

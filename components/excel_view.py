@@ -17,15 +17,15 @@ def display_excel_column(uploaded_file):
     if selected_sheet:
         df = excel_data[selected_sheet].fillna("")
         
-        # 2. MODERN EDITOR CONFIGURATION
-        # 'selection_mode' is the key fix for modern Streamlit
+        # 2. Modern Selection Mode
+        # This replaces the need for double-clicking/editing
         event = st.data_editor(
             df,
             key="excel_editor", 
             width="stretch",
             height=800,
-            selection_mode="single-cell", # Enable one-click selection
-            disabled=True,                # Keep it read-only for now
+            selection_mode="single-cell", # Enabled now that you have v1.40.0
+            disabled=True,                # Keeps it clean; user just clicks
             hide_index=False
         )
         
