@@ -17,15 +17,14 @@ def display_excel_column(uploaded_file):
     if selected_sheet:
         df = excel_data[selected_sheet].fillna("")
         
-        # 2. Modern Selection Mode
-        # This replaces the need for double-clicking/editing
+        # FIX: Removed 'selection_mode' to prevent the TypeError crash
+        # Clicks are still captured via the 'excel_editor' key in session_state
         event = st.data_editor(
             df,
             key="excel_editor", 
             width="stretch",
             height=800,
-            selection_mode="single-cell", # Enabled now that you have v1.40.0
-            disabled=True,                # Keeps it clean; user just clicks
+            disabled=False, 
             hide_index=False
         )
         
