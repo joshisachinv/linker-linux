@@ -18,7 +18,7 @@ def display_sidebar():
         # =========================
         # FILES
         # =========================
-        render_sidebar_section("Files").
+        render_sidebar_section("Files")
 
         excel_file = st.file_uploader(
             "Excel workbook",
