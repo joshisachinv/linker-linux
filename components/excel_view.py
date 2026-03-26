@@ -133,16 +133,22 @@ def display_excel_column(uploaded_file):
             theme="streamlit",
         )
 
-        selected_rows = grid_response.get("selected_rows", [])
+        selected_rows = grid_response.get("selected_rows", []) if grid_response else []
         selected_cell = None
 
-        selected_ranges = grid_response.get("grid_state", {}).get("cellSelection", [])
+        grid_state = grid_response.get("grid_state") or {}
+        selected_ranges = grid_state.get("cellSelection", [])
 
         if selected_ranges:
-            first_range = selected_ranges[0]
-            row_index = first_range.get("startRow", 0)
+            first_range = selected_ranges[0] or {}
 
-            columns = first_range.get("columns", [])
+            start_row = first_range.get("startRow", {})
+            if isinstance(start_row, dict):
+                row_index = start_row.get("rowIndex", 0)
+            else:
+                row_index = start_row or 0
+
+            columns = first_range.get("columns", []) or []
             if columns:
                 column_name = columns[0]
 
