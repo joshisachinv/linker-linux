@@ -42,5 +42,6 @@ def display_excel_column(uploaded_file):
         return selected_sheet, selected_cell
 
     except Exception as exc:
-        st.error(f"Failed to read Excel file: {exc}")
+        st.exception(exc)
+        st.error(f"Failed to read Excel file: {type(exc).__name__}: {exc}")
         return None, None

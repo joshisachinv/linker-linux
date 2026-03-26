@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 
@@ -34,10 +35,33 @@ def _build_grid_options(df_display):
     return gb.build()
 
 
+def _normalize_selected_row(selected_rows):
+    if selected_rows is None:
+        return None
+
+    if isinstance(selected_rows, pd.DataFrame):
+        if selected_rows.empty:
+            return None
+        return selected_rows.iloc[0].to_dict()
+
+    if isinstance(selected_rows, pd.Series):
+        return selected_rows.to_dict()
+
+    if isinstance(selected_rows, list):
+        if len(selected_rows) == 0:
+            return None
+        first = selected_rows[0]
+        if isinstance(first, pd.Series):
+            return first.to_dict()
+        return first
+
+    if isinstance(selected_rows, dict):
+        return selected_rows
+
+    return None
+
+
 def render_excel_grid(df, selected_sheet: str):
-    """
-    Render the Excel-like grid and return the selected row object, if any.
-    """
     df_display = add_row_numbers(df)
 
     st.caption("Select a row, then choose a column below.")
@@ -56,10 +80,15 @@ def render_excel_grid(df, selected_sheet: str):
         theme="streamlit",
     )
 
-    selected_rows = grid_response.get("selected_rows", []) if grid_response else []
-
-    if len(selected_rows) == 0:
+    if not grid_response:
         st.info("Select a row in the grid to choose a cell.")
         return None
 
-    return selected_rows[0]
+    selected_rows = grid_response.get("selected_rows")
+    selected_row = _normalize_selected_row(selected_rows)
+
+    if selected_row is None:
+        st.info("Select a row in the grid to choose a cell.")
+        return None
+
+    return selected_row
