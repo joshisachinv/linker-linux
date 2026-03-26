@@ -15,9 +15,6 @@ def excel_col_name(col_idx: int) -> str:
 
 
 def display_excel_column(uploaded_file):
-    from components.styles import render_column_label
-
-    render_column_label("Excel Viewer")
 
     if uploaded_file is None:
         return None, None

@@ -83,7 +83,6 @@ def render_header(title: str):
 def render_panel_start(title: str):
     st.markdown(f'<div class="panel"><div class="panel-title">{title}</div>', unsafe_allow_html=True)
 
-
 def render_panel_end():
     st.markdown('</div>', unsafe_allow_html=True)
 
