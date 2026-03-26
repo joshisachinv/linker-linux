@@ -1,39 +1,32 @@
 from PIL import Image, ImageDraw
 import streamlit as st
 
-def draw_pdf_highlights(img, screen_rect):
-    """Draws a semi-transparent highlight on a PIL image."""
-    if screen_rect:
-        draw = ImageDraw.Draw(img, "RGBA")
-        # Standard yellow highlight with 40% transparency (100/255)
-        draw.rectangle(
-            screen_rect, 
-            fill=(255, 255, 0, 100), 
-            outline="red", 
-            width=2
-        )
-    return img
+from PIL import Image, ImageDraw
+import streamlit as st
 
-def update_selection_state(coords, zoom):
-    """Calculates and stores screen and PDF-scale coordinates."""
-    if coords:
-        x, y = coords['x'], coords['y']
-        
-        # Define the size of the box (e.g., 60x25 pixels)
-        box_w, box_h = 60, 25
-        
-        # Store screen coordinates for visual drawing
-        st.session_state['active_rect_screen'] = [x, y, x + box_w, y + box_h]
-        
-        # Store PDF-scale coordinates for the actual link (ignores zoom)
-        st.session_state['active_rect'] = (
-            x / zoom, 
-            y / zoom, 
-            (x + box_w) / zoom, 
-            (y + box_h) / zoom
-        )
-        return True
-    return False
+def draw_pdf_highlights(img, screen_rect, saved_links=None, show_saved=True, zoom=1.0):
+    """Draws both the active selection and previously saved links."""
+    draw = ImageDraw.Draw(img, "RGBA")
+    
+    # 1. Draw the "Active" (unsaved) highlight in Red/Yellow
+    if screen_rect:
+        draw.rectangle(screen_rect, fill=(255, 255, 0, 100), outline="red", width=2)
+    
+    # 2. Draw "Saved" highlights in Green if the toggle is ON
+    if show_saved and saved_links:
+        for addr, link in saved_links.items():
+            # Only draw if the link is on the currently displayed page
+            if link.page_index == st.session_state.get('current_page'):
+                # Scale PDF coordinates back to screen pixels based on current zoom
+                pdf_rect = link.rect # (x0, y0, x1, y1)
+                screen_box = [
+                    pdf_rect[0] * zoom, 
+                    pdf_rect[1] * zoom, 
+                    pdf_rect[2] * zoom, 
+                    pdf_rect[3] * zoom
+                ]
+                draw.rectangle(screen_box, fill=(0, 255, 0, 60), outline="green", width=1)
+    return img
 
 def handle_vertex_selection(coords, zoom):
     """

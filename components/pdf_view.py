@@ -1,6 +1,6 @@
 import streamlit as st
 import fitz
-from PIL import Image, ImageDraw # Added ImageDraw for highlights
+from PIL import Image
 from streamlit_image_coordinates import streamlit_image_coordinates
 from logic.pdf_tools import handle_vertex_selection, draw_pdf_highlights
 
@@ -18,7 +18,7 @@ def display_pdf_column(uploaded_file):
 
     doc = load_pdf(uploaded_file.getvalue())
     
-    # 1. Navigation Controls
+    # 1. Navigation & Scaling Controls
     with st.container():
         c1, c2, c3 = st.columns([1, 2, 1]) 
         with c1:
@@ -28,20 +28,31 @@ def display_pdf_column(uploaded_file):
         with c3:
             st.markdown(f"<br>OF {len(doc)}", unsafe_allow_html=True)
 
-    # 2. Render Base Page
+    # 2. State & Data Prep
+    show_highlights = st.session_state.get('show_highlights_toggle', True)
+    saved_links = st.session_state.get('links', {})
+    st.session_state['current_page'] = page_num - 1 # Ensure sync for highlight drawing
+     
+    # 3. Render PDF Page to Image
     page = doc.load_page(page_num - 1)
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom, zoom))
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
     
-    # 3. Apply visual highlights if they exist
-    if 'active_rect_screen' in st.session_state:
-        img = draw_pdf_highlights(img, st.session_state['active_rect_screen'])
-
-    # 4. Display the Interactive Component
-    st.caption("🎯 Click twice to define a custom area")
-    coords = streamlit_image_coordinates(img, key="pdf_selector")
+    # 4. Draw Highlights (Both Active Selection and Persistent Links)
+    img = draw_pdf_highlights(
+            img, 
+            st.session_state.get('active_rect_screen'),
+            saved_links=saved_links,
+            show_saved=show_highlights,
+            zoom=zoom
+    )
     
-    # 5. Use the Reusable Logic
+    # 5. Single Interactive Component
+    # We use a static key or one tied to zoom to prevent unnecessary resets
+    st.caption("🎯 Click twice to define a custom area (Top-Left then Bottom-Right)")
+    coords = streamlit_image_coordinates(img, key=f"pdf_selector_p{page_num}_z{zoom}")
+    
+    # 6. Logic Handling
     if handle_vertex_selection(coords, zoom):
         st.rerun()
 

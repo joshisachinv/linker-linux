@@ -10,6 +10,7 @@ def display_sidebar():
         pdf_file = st.file_uploader("Upload PDF", type="pdf")
         
         st.divider()
+        st.checkbox("👁️ Show Saved Highlights", value=True, key="show_highlights_toggle")
         
         if st.button("🔗 Finalize Link", width="stretch"):
             editor_event = st.session_state.get('excel_editor')
@@ -17,7 +18,7 @@ def display_sidebar():
                 capture_link(editor_event, st.session_state.get('current_page', 0), pdf_file)
             else:
                 st.sidebar.warning("Ensure Excel cell is highlighted and PDF is clicked.")
-                
+        
         if 'links' in st.session_state and st.session_state.links:
             st.divider()
             if st.button("💾 Save Links to Excel", width="stretch"):
