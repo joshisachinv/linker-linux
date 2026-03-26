@@ -9,7 +9,7 @@ def display_excel_column(uploaded_file):
     if uploaded_file is None:
         return None, None
 
-    # 1. Load Data
+    # Load Data
     excel_data = pd.read_excel(uploaded_file, sheet_name=None, header=None)
     display_sheets = [s for s in excel_data.keys() if s != "__PDF_LINKS__"]
     selected_sheet = st.selectbox("Select Sheet", display_sheets)
@@ -17,12 +17,13 @@ def display_excel_column(uploaded_file):
     if selected_sheet:
         df = excel_data[selected_sheet].fillna("")
         
+        # Use a flexible height and container width for Python 3.14 stability
         event = st.data_editor(
             df,
             key="excel_editor", 
-            use_container_width=True, # Modern way to stretch width
-            height=800,               # Integer height
-            disabled=False,
+            use_container_width=True,
+            height=800,
+            disabled=False, 
             hide_index=False
         )
         
