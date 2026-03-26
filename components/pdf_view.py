@@ -23,10 +23,6 @@ def render_pdf_page(file_bytes: bytes, page_index: int, zoom: float) -> bytes:
 
 
 def display_pdf_column(uploaded_file):
-    from components.styles import render_column_label
-
-    render_column_label("PDF Real-Time Linker")
-
     if uploaded_file is None:
         st.info("Upload PDF to begin.")
         return None, None
@@ -35,7 +31,6 @@ def display_pdf_column(uploaded_file):
         file_bytes = uploaded_file.getvalue()
         total_pages = get_pdf_page_count(file_bytes)
 
-        # Navigation and zoom
         nav_col, zoom_col = st.columns([1, 2])
 
         page_num = nav_col.number_input(
@@ -57,13 +52,17 @@ def display_pdf_column(uploaded_file):
         )
 
         current_page = page_num - 1
+
+        previous_page = st.session_state.get("current_page")
+        if previous_page is not None and previous_page != current_page:
+            st.session_state.pop("active_rect", None)
+            st.session_state.pop("active_rect_screen", None)
+
         st.session_state["current_page"] = current_page
 
-        # Render page image
         page_png = render_pdf_page(file_bytes, current_page, zoom)
         bg_img = Image.open(io.BytesIO(page_png)).convert("RGB")
 
-        # Overlay saved highlights
         bg_img = draw_saved_highlights(
             bg_img,
             st.session_state.get("links", {}),
@@ -71,7 +70,7 @@ def display_pdf_column(uploaded_file):
             st.session_state.get("show_highlights_toggle", True),
         )
 
-        st.caption("🖱️ Drag to draw a rectangle over the target area")
+        st.caption("Drag to draw a rectangle over the target area.")
 
         canvas_result = st_canvas(
             fill_color="rgba(255, 255, 0, 0.30)",
@@ -86,10 +85,8 @@ def display_pdf_column(uploaded_file):
             display_toolbar=True,
         )
 
-        # Save selection side effects in your existing logic
         handle_canvas_selection(canvas_result, zoom)
 
-        # Keep return signature compatible with your app.py
         return current_page, None
 
     except Exception as exc:
