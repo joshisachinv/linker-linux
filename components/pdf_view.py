@@ -1,6 +1,6 @@
 import streamlit as st
-import fitz  # PyMuPDF
-from PIL import Image
+import fitz
+from PIL import Image, ImageDraw # Added ImageDraw for highlights
 from streamlit_image_coordinates import streamlit_image_coordinates
 
 @st.cache_resource
@@ -16,37 +16,50 @@ def display_pdf_column(uploaded_file):
         return None, None
 
     doc = load_pdf(uploaded_file.getvalue())
-        
-    # Navigation controls
+    
+    # 1. Navigation Controls
     with st.container():
         c1, c2, c3 = st.columns([1, 2, 1]) 
         with c1:
-            st.markdown('<p class="viewer-label">PAGE</p>', unsafe_allow_html=True)
-            page_num = st.number_input("Page", 1, len(doc), 1, label_visibility="collapsed", key="pdf_page_input")
+            page_num = st.number_input("Page", 1, len(doc), 1, key="pdf_page_input")
         with c2:
-            st.markdown('<p class="viewer-label">ZOOM</p>', unsafe_allow_html=True)
-            zoom = st.slider("Zoom", 1.0, 4.0, 2.0, 0.1, label_visibility="collapsed", key="pdf_zoom_slider")
+            zoom = st.slider("Zoom", 1.0, 4.0, 2.0, 0.1, key="pdf_zoom_slider")
         with c3:
-            st.markdown(f'<p class="viewer-label">OF {len(doc)}</p>', unsafe_allow_html=True)
+            st.markdown(f"<br>OF {len(doc)}", unsafe_allow_html=True)
 
-    # Render Page
+    # 2. Render Base Page
     page = doc.load_page(page_num - 1)
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom, zoom))
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
     
-    st.caption("🎯 Click on the PDF area to link it to the selected Excel cell")
+    # 3. DRAW THE HIGHLIGHT IF AN AREA IS SELECTED
+    # This shows the user what they have just clicked
+    if 'active_rect_screen' in st.session_state:
+        draw = ImageDraw.Draw(img, "RGBA")
+        # Draw a semi-transparent yellow box
+        # Coordinates: [x0, y0, x1, y1]
+        draw.rectangle(
+            st.session_state['active_rect_screen'], 
+            fill=(255, 255, 0, 100), 
+            outline="red", 
+            width=3
+        )
+
+    st.caption("🎯 Click to highlight an area and link it to the Excel cell")
     
-    # CAPTURE CLICK COORDINATES
+    # 4. CAPTURE CLICK
     coords = streamlit_image_coordinates(img, key="pdf_selector")
     
-    # Store the latest click in session state for the capture button
     if coords:
-        # Convert click to PDF points (scale back from zoom)
-        pdf_x = coords['x'] / zoom
-        pdf_y = coords['y'] / zoom
-        # Create a small 50x20 box around the click
+        # Save screen coords for drawing the highlight box next rerun
+        x, y = coords['x'], coords['y']
+        st.session_state['active_rect_screen'] = [x, y, x + 60, y + 25]
+        
+        # Save PDF-scale coords for the actual link (ignores zoom)
+        pdf_x, pdf_y = x / zoom, y / zoom
         st.session_state['active_rect'] = (pdf_x, pdf_y, pdf_x + 50, pdf_y + 20)
-        st.toast(f"Area Selected at {coords['x']}, {coords['y']}")
+        
+        # Force rerun to show the highlight immediately
+        st.rerun()
 
     return page_num - 1, doc
-  

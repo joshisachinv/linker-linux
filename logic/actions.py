@@ -22,6 +22,9 @@ def capture_link(excel_selection, current_page, pdf_file):
         st.sidebar.error("❌ Select an Excel cell first!")
         return False
 
+    if 'active_rect_screen' in st.session_state:
+    del st.session_state['active_rect_screen']
+
     # 2. Get the Rect from the PDF Click
     # Default to top of page if no area was clicked
     rect = st.session_state.get('active_rect', (0, 0, 100, 20))
