@@ -17,15 +17,12 @@ def display_excel_column(uploaded_file):
     if selected_sheet:
         df = excel_data[selected_sheet].fillna("")
         
-        # FIX: Replaced width="stretch" with use_container_width=True
-        # and ensured height is an integer to satisfy Python 3.14
         event = st.data_editor(
             df,
             key="excel_editor", 
             use_container_width=True, # Modern way to stretch width
             height=800,               # Integer height
-            selection_mode="single-cell",
-            disabled=True,
+            disabled=False,
             hide_index=False
         )
         

@@ -12,7 +12,6 @@ def display_sidebar():
         
         st.divider()
         
-        # 1. Capture Action
         if st.button("🔗 Capture & Link Selection", use_container_width=True):
             editor_event = st.session_state.get('editor_event')
             if editor_event is not None:
@@ -20,12 +19,10 @@ def display_sidebar():
             else:
                 st.sidebar.warning("Select an Excel cell first.")
 
-        # 2. Save Action
+        # Save to Excel Logic
         if 'links' in st.session_state and st.session_state.links:
             st.divider()
             if st.button("💾 Save Links to Excel", use_container_width=True):
-                output = io.BytesIO()
-                # Create temporary file to handle openpyxl saving
                 with open("temp_linked.xlsx", "wb") as f:
                     f.write(excel_file.getbuffer())
                 
@@ -39,19 +36,8 @@ def display_sidebar():
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         use_container_width=True
                     )
-                st.success("Links embedded! Click download above.")
-
-        st.divider()
-        with st.expander("🔍 Developer Debug"):
-            st.write("Current Page:", st.session_state.get('current_page'))
-            editor_state = st.session_state.get("excel_editor", "Not found")
-            st.write("Excel Editor State:", editor_state)
         
-        if 'links' in st.session_state and st.session_state.links:
-            with st.expander("📝 Current Session Links"):
-                for cell, link in st.session_state.links.items():
-                    st.write(f"**{cell}** → Page {link.page_index + 1}")
-
+        st.divider()
         if st.button("🗑️ Clear Cache", use_container_width=True):
             st.cache_data.clear()
             st.success("Cache cleared!")
