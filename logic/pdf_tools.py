@@ -1,77 +1,36 @@
-from PIL import Image, ImageDraw
 import streamlit as st
 
-from PIL import Image, ImageDraw
-import streamlit as st
-
-def draw_pdf_highlights(img, screen_rect, saved_links=None, show_saved=True, zoom=1.0):
-    """Draws both the active selection and previously saved links."""
-    draw = ImageDraw.Draw(img, "RGBA")
-    
-    #1. Draw "GHOST" or STARTING POINT
-    # If user clicked once but hasn't finished the box
-    if 'first_click' in st.session_state and not screen_rect:
-        x, y = st.session_state['first_click']
-        # Draw a small red target/crosshair where they started
-        draw.ellipse([x-3, y-3, x+3, y+3], fill="red", outline="white")
-        draw.line([x-10, y, x+10, y], fill="red", width=1)
-        draw.line([x, y-10, x, y+10], fill="red", width=1)
-
-    # Draw the COMPLETED ACTIVE RECT (Yellow)
-    if screen_rect:
-        draw.rectangle(screen_rect, fill=(255, 255, 0, 80), outline="red", width=2)
-    
-    # 2. Draw "Saved" highlights in Green if the toggle is ON
-    if show_saved and saved_links:
-        for addr, link in saved_links.items():
-            # Only draw if the link is on the currently displayed page
-            if link.page_index == st.session_state.get('current_page'):
-                # Scale PDF coordinates back to screen pixels based on current zoom
-                pdf_rect = link.rect # (x0, y0, x1, y1)
-                screen_box = [
-                    pdf_rect[0] * zoom, 
-                    pdf_rect[1] * zoom, 
-                    pdf_rect[2] * zoom, 
-                    pdf_rect[3] * zoom
-                ]
-                draw.rectangle(screen_box, fill=(0, 255, 0, 60), outline="green", width=1)
-    return img
-
-def handle_vertex_selection(coords, zoom):
+def handle_canvas_selection(canvas_result, zoom):
     """
-    Reusable logic to capture two points and return a normalized rectangle.
-    Returns: True if a selection was updated/completed, False otherwise.
+    Parses the JSON from streamlit-drawable-canvas to find the latest rectangle.
+    Returns: True if a new box was found, False otherwise.
     """
-    if not coords:
+    if canvas_result is None or canvas_result.json_data is None:
         return False
         
-    x, y = coords['x'], coords['y']
+    objects = canvas_result.json_data.get("objects")
+    if not objects:
+        return False
 
-    # Step 1: Handle First Click
-    if 'first_click' not in st.session_state:
-        st.session_state['first_click'] = (x, y)
-        st.toast("First corner set! Click the opposite corner.")
-        return True
+    # Get the most recently drawn object (the last one in the list)
+    latest_obj = objects[-1]
     
-    # Step 2: Handle Second Click
-    else:
-        x0, y0 = st.session_state['first_click']
+    if latest_obj.get("type") == "rect":
+        # Extract coordinates
+        left = latest_obj["left"]
+        top = latest_obj["top"]
+        width = latest_obj["width"] * latest_obj["scaleX"]
+        height = latest_obj["height"] * latest_obj["scaleY"]
         
-        # Normalize coordinates so selection works in any direction
-        left, right = min(x0, x), max(x0, x)
-        top, bottom = min(y0, y), max(y0, y)
-        
-        # Store Screen Coords for drawing the visual highlight
-        st.session_state['active_rect_screen'] = [left, top, right, bottom]
-        
-        # Store PDF-scale Coords for the actual data link
+        # Store for the link (scaled by zoom)
         st.session_state['active_rect'] = (
-            left / zoom, 
-            top / zoom, 
-            right / zoom, 
-            bottom / zoom
+            left / zoom,
+            top / zoom,
+            (left + width) / zoom,
+            (top + height) / zoom
         )
-        
-        # Reset first_click to allow for a new selection immediately
-        del st.session_state['first_click']
+        # Store for visual persistence if needed
+        st.session_state['active_rect_screen'] = [left, top, left + width, top + height]
         return True
+        
+    return False

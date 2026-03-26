@@ -1,8 +1,8 @@
 import streamlit as st
 import fitz
 from PIL import Image
-from streamlit_image_coordinates import streamlit_image_coordinates
-from logic.pdf_tools import handle_vertex_selection, draw_pdf_highlights
+from streamlit_drawable_canvas import st_canvas
+from logic.pdf_tools import draw_pdf_highlights, handle_canvas_selection
 
 @st.cache_resource
 def load_pdf(file_bytes):
@@ -13,12 +13,12 @@ def display_pdf_column(uploaded_file):
     render_column_label("PDF Viewer")
 
     if not uploaded_file:
-        st.info("Upload a PDF in the sidebar to begin.")
+        st.info("Upload a PDF in the sidebar.")
         return None, None
 
     doc = load_pdf(uploaded_file.getvalue())
     
-    # 1. Navigation & Scaling Controls
+    # 1. Navigation & Zoom
     with st.container():
         c1, c2, c3 = st.columns([1, 2, 1]) 
         with c1:
@@ -28,32 +28,39 @@ def display_pdf_column(uploaded_file):
         with c3:
             st.markdown(f"<br>OF {len(doc)}", unsafe_allow_html=True)
 
-    # 2. State & Data Prep
-    show_highlights = st.session_state.get('show_highlights_toggle', True)
-    saved_links = st.session_state.get('links', {})
-    st.session_state['current_page'] = page_num - 1 # Ensure sync for highlight drawing
-     
-    # 3. Render PDF Page to Image
+    # 2. Render Page Background
     page = doc.load_page(page_num - 1)
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom, zoom))
-    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+    bg_img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
     
-    # 4. Draw Highlights (Both Active Selection and Persistent Links)
-    img = draw_pdf_highlights(
-            img, 
-            st.session_state.get('active_rect_screen'),
-            saved_links=saved_links,
-            show_saved=show_highlights,
-            zoom=zoom
+    # 3. Draw ONLY Saved Highlights onto the background image
+    # The Canvas will handle the current "active" drag box
+    bg_img = draw_pdf_highlights(
+        bg_img, 
+        None, # No active rect here
+        saved_links=st.session_state.get('links', {}),
+        show_saved=st.session_state.get('show_highlights_toggle', True),
+        zoom=zoom
     )
-    
-    # 5. Single Interactive Component
-    # We use a static key or one tied to zoom to prevent unnecessary resets
-    st.caption("🎯 Click twice to define a custom area (Top-Left then Bottom-Right)")
-    coords = streamlit_image_coordinates(img, key=f"pdf_selector_p{page_num}_z{zoom}")
-    
-    # 6. Logic Handling
-    if handle_vertex_selection(coords, zoom):
-        st.rerun()
+
+    # 4. The Drawable Canvas
+    st.caption("🖱️ Drag your mouse to select an area")
+    canvas_result = st_canvas(
+        fill_color="rgba(255, 255, 0, 0.3)",  # Yellow highlight
+        stroke_width=2,
+        stroke_color="#ff0000",
+        background_image=bg_img,
+        update_streamlit=True,
+        height=bg_img.height,
+        width=bg_img.width,
+        drawing_mode="rect",
+        key=f"canvas_{page_num}_{zoom}",
+    )
+
+    # 5. Process Selection
+    if handle_canvas_selection(canvas_result, zoom):
+        # We don't always need st.rerun() here as the canvas updates 
+        # but it helps sync st.session_state['active_rect'] immediately
+        pass
 
     return page_num - 1, doc
