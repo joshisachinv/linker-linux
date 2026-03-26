@@ -3,9 +3,9 @@ import io
 import fitz
 import streamlit as st
 from PIL import Image
-from streamlit_drawable_canvas import st_canvas
+from streamlit_image_coordinates import streamlit_image_coordinates
 
-from logic.pdf_tools import draw_saved_highlights, handle_canvas_selection
+from logic.pdf_tools import draw_saved_highlights, handle_image_selection
 
 
 @st.cache_data(show_spinner=False)
@@ -54,15 +54,21 @@ def display_pdf_column(uploaded_file):
         current_page = page_num - 1
 
         previous_page = st.session_state.get("current_page")
-        if previous_page is not None and previous_page != current_page:
+        previous_zoom = st.session_state.get("pdf_zoom_last")
+
+        # Clear stale selection if page or zoom changed
+        if previous_page != current_page or previous_zoom != zoom:
             st.session_state.pop("active_rect", None)
             st.session_state.pop("active_rect_screen", None)
 
         st.session_state["current_page"] = current_page
+        st.session_state["pdf_zoom_last"] = zoom
 
+        # Render page
         page_png = render_pdf_page(file_bytes, current_page, zoom)
         bg_img = Image.open(io.BytesIO(page_png)).convert("RGB")
 
+        # Draw saved highlights on top
         bg_img = draw_saved_highlights(
             bg_img,
             st.session_state.get("links", {}),
@@ -70,22 +76,27 @@ def display_pdf_column(uploaded_file):
             st.session_state.get("show_highlights_toggle", True),
         )
 
-        st.caption("Drag to draw a rectangle over the target area.")
+        st.caption("Drag on the PDF image to select a region.")
 
-        canvas_result = st_canvas(
-            fill_color="rgba(255, 255, 0, 0.30)",
-            stroke_width=2,
-            stroke_color="#ff0000",
-            background_image=bg_img,
-            update_streamlit=True,
-            height=bg_img.height,
+        # This component supports click-and-drag selection
+        selection = streamlit_image_coordinates(
+            bg_img,
+            key=f"pdf_image_coords_{current_page}_{zoom}",
             width=bg_img.width,
-            drawing_mode="rect",
-            key=f"pdf_canvas_page_{current_page}_zoom_{zoom}",
-            display_toolbar=True,
+            click_and_drag=True,
+            use_column_width="never",
+            cursor="crosshair",
         )
 
-        handle_canvas_selection(canvas_result, zoom)
+        handle_image_selection(selection, zoom)
+
+        # Optional live status
+        rect = st.session_state.get("active_rect_screen")
+        if rect:
+            x0, y0, x1, y1 = rect
+            st.caption(
+                f"Selected area: ({int(x0)}, {int(y0)}) → ({int(x1)}, {int(y1)})"
+            )
 
         return current_page, None
 
