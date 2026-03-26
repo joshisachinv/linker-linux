@@ -23,7 +23,6 @@ def display_excel_column(uploaded_file):
             key="excel_editor", 
             width="stretch",
             height=800,
-            selection_mode="single-cell",
             disabled=True,
             hide_index=False
         )
