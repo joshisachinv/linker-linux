@@ -3,28 +3,28 @@ from models.pdf_link import PdfLink
 from logic.cell_addr import cell_address
 
 def capture_link(excel_selection, current_page, pdf_file):
-    selection = excel_selection.get("selection", {})
+    # 1. Get Excel Address from Editor state
+    state = st.session_state.get("excel_editor", {})
+    selection = state.get("selection", {})
     cells = selection.get("cells", [])
-    row_idx = None
-    col_idx = 0 
+    
+    row_idx, col_idx = None, None
 
-    # 1. Try Modern Selection first (single-cell click)
     if cells:
         row_idx, col_idx = cells[0]
-    
-    # 2. Fallback to Edited Rows (Double-click + Enter)
-    elif excel_selection.get("edited_rows"):
-        edited_rows = excel_selection.get("edited_rows")
-        row_str = list(edited_rows.keys())[-1]
+    elif state.get("edited_rows"):
+        row_str = list(state["edited_rows"].keys())[-1]
         row_idx = int(row_str)
-        row_data = edited_rows[row_str]
-        if row_data:
-            col_idx = int(list(row_data.keys())[-1])
+        row_data = state["edited_rows"][row_str]
+        col_idx = int(list(row_data.keys())[-1]) if row_data else 0
 
-    # 3. Validation - If both failed, then show the error
     if row_idx is None:
-        st.sidebar.error("❌ Link Failed: Click or Edit a cell first.")
+        st.sidebar.error("❌ Select an Excel cell first!")
         return False
+
+    # 2. Get the Rect from the PDF Click
+    # Default to top of page if no area was clicked
+    rect = st.session_state.get('active_rect', (0, 0, 100, 20))
 
     addr = cell_address(row_idx, col_idx)
     pdf_name = pdf_file.name if pdf_file else "Unknown.pdf"
@@ -32,12 +32,12 @@ def capture_link(excel_selection, current_page, pdf_file):
     new_link = PdfLink(
         pdf_path=pdf_name,
         page_index=current_page,
-        rect=(0, 0, 100, 100) 
+        rect=rect # Use the captured rectangle
     )
 
     if 'links' not in st.session_state:
         st.session_state.links = {}
     
     st.session_state.links[addr] = new_link
-    st.sidebar.success(f"✅ Linked {addr} to Page {current_page + 1}")
+    st.sidebar.success(f"✅ Linked {addr} to Area on Page {current_page + 1}")
     return True
