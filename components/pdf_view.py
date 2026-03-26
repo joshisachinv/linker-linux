@@ -2,7 +2,7 @@ import streamlit as st
 import fitz
 from PIL import Image, ImageDraw # Added ImageDraw for highlights
 from streamlit_image_coordinates import streamlit_image_coordinates
-from logic.pdf_tools import draw_pdf_highlights, update_selection_state
+from logic.pdf_tools import handle_vertex_selection, draw_pdf_highlights
 
 @st.cache_resource
 def load_pdf(file_bytes):
@@ -33,15 +33,16 @@ def display_pdf_column(uploaded_file):
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom, zoom))
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
     
-    # 3. DRAW THE HIGHLIGHT IF AN AREA IS SELECTED
-    img = draw_pdf_highlights(img, st.session_state.get('active_rect_screen'))
-    
-    # 4. CAPTURE CLICK
-    st.caption("🎯 Click to highlight an area")
+    # 3. Apply visual highlights if they exist
+    if 'active_rect_screen' in st.session_state:
+        img = draw_pdf_highlights(img, st.session_state['active_rect_screen'])
+
+    # 4. Display the Interactive Component
+    st.caption("🎯 Click twice to define a custom area")
     coords = streamlit_image_coordinates(img, key="pdf_selector")
     
-    # 5. Handle Selection (Modularized)
-    if update_selection_state(coords, zoom):
+    # 5. Use the Reusable Logic
+    if handle_vertex_selection(coords, zoom):
         st.rerun()
 
     return page_num - 1, doc
