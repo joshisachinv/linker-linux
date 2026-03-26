@@ -50,7 +50,6 @@ def apply_custom_css():
             box-shadow: var(--panel-shadow);
             padding-top: 0.4rem !important;
             padding-bottom: 0.4rem !important;
-            min-height: 70vh;
         }
 
         .panel-title {
