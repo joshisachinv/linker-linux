@@ -50,6 +50,18 @@ if new_excel_sig != st.session_state.excel_sig or new_pdf_sig != st.session_stat
 # Top toolbar
 toolbar_left, toolbar_right = st.columns([3, 2])
 
+st.markdown(
+    """
+    <style>
+    div[data-testid="stHorizontalBlock"] {
+        margin-top: -10px;
+        margin-bottom: -10px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 with toolbar_left:
     st.caption("Link spreadsheet cells to PDF regions.")
 

@@ -5,7 +5,7 @@ def apply_custom_css():
     st.markdown("""
     <style>
         :root {
-            --app-header-h: 32px;
+            --app-header-h: 28px;
             --panel-radius: 16px;
             --panel-border: 1px solid rgba(49, 51, 63, 0.18);
             --panel-bg: rgba(255, 255, 255, 0.72);
@@ -13,7 +13,7 @@ def apply_custom_css():
         }
 
         .stAppViewContainer .main .block-container {
-            padding-top: calc(var(--app-header-h) + 0.5rem);
+            padding-top: calc(var(--app-header-h) + 0.2rem);
         }
 
         .app-header {
@@ -21,16 +21,16 @@ def apply_custom_css():
             top: 0;
             left: 0;
             right: 0;
-            height: 32px;
+            height: 28px;
             display: flex;
             align-items: center;
-            padding: 0 0.75rem;
+            padding: 0 0.6rem;
             background: rgba(255, 255, 255, 0.88);
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(49, 51, 63, 0.12);
             z-index: 9999;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: 0.01em;
         }
@@ -48,7 +48,7 @@ def apply_custom_css():
             border: var(--panel-border);
             border-radius: var(--panel-radius);
             box-shadow: var(--panel-shadow);
-            padding: 0.75rem 0.9rem 0.9rem 0.9rem;
+            padding-top: 0.4rem !important;
             min-height: 70vh;
         }
 
@@ -58,7 +58,7 @@ def apply_custom_css():
             letter-spacing: 0.08em;
             text-transform: uppercase;
             color: #3b82f6;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.2rem !important;
         }
 
         .toolbar-caption {
