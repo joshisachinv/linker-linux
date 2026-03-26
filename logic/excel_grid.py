@@ -58,7 +58,7 @@ def render_excel_grid(df, selected_sheet: str):
 
     selected_rows = grid_response.get("selected_rows", []) if grid_response else []
 
-    if not selected_rows:
+    if len(selected_rows) == 0:
         st.info("Select a row in the grid to choose a cell.")
         return None
 
