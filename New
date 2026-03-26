@@ -1,5 +1,5 @@
 git add .
 
-git commit -m "added a new feature"
+git commit -m "Updates"
 
 git push

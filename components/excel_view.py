@@ -17,24 +17,18 @@ def display_excel_column(uploaded_file):
     if selected_sheet:
         df = excel_data[selected_sheet].fillna("")
         
-        # 2. Modern Selection Mode (Requires Streamlit 1.35+)
+        # FIX: Replaced width="stretch" with use_container_width=True
+        # and ensured height is an integer to satisfy Python 3.14
         event = st.data_editor(
             df,
             key="excel_editor", 
-            width="stretch",
-            height=800,
+            use_container_width=True, # Modern way to stretch width
+            height=800,               # Integer height
+            selection_mode="single-cell",
             disabled=True,
             hide_index=False
         )
         
-        # 3. Check for existing links
-        try:
-            links = try_load_embedded_links(uploaded_file)
-            if links:
-                st.success(f"Found {len(links)} embedded links.")
-        except:
-            pass
-            
         return selected_sheet, event
         
     return None, None
