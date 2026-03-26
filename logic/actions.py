@@ -3,22 +3,25 @@ from models.pdf_link import PdfLink
 from logic.cell_addr import cell_address
 
 def capture_link(excel_selection, current_page, pdf_file):
-    state = st.session_state.get("excel_editor", {})
+    selection = excel_selection.get("selection", {})
+    cells = selection.get("cells", [])
     row_idx = None
     col_idx = 0 
 
-    # 1. Try Modern Click (selection API)
-    if state.get("selection") and state["selection"].get("cells"):
-        row_idx, col_idx = state["selection"]["cells"][0]
+    # 1. Try Modern Selection first (single-cell click)
+    if cells:
+        row_idx, col_idx = cells[0]
     
-    # 2. Fallback to Edit Mode (edited_rows)
-    elif state.get("edited_rows"):
-        row_str = list(state["edited_rows"].keys())[-1]
+    # 2. Fallback to Edited Rows (Double-click + Enter)
+    elif excel_selection.get("edited_rows"):
+        edited_rows = excel_selection.get("edited_rows")
+        row_str = list(edited_rows.keys())[-1]
         row_idx = int(row_str)
-        row_data = state["edited_rows"][row_str]
+        row_data = edited_rows[row_str]
         if row_data:
             col_idx = int(list(row_data.keys())[-1])
 
+    # 3. Validation - If both failed, then show the error
     if row_idx is None:
         st.sidebar.error("❌ Link Failed: Click or Edit a cell first.")
         return False

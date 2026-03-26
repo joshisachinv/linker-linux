@@ -12,11 +12,10 @@ def display_sidebar():
         st.divider()
         
         if st.button("🔗 Capture & Link Selection", use_container_width=True):
-            editor_event = st.session_state.get('editor_event')
+            editor_state = st.session_state.get('excel_editor')
     
-            # FIX: Change 'if editor_event:' to 'if editor_event is not None:'
-            if editor_event is not None: 
-                capture_link(editor_event, st.session_state.get('current_page', 0), pdf_file)
+            if editor_state is not None: 
+                capture_link(editor_state, st.session_state.get('current_page', 0), pdf_file)
             else:
                 st.sidebar.warning("Select an Excel cell first.")
                 
