@@ -4,17 +4,17 @@ from typing import Tuple, Optional
 
 @dataclass
 class PdfLink:
-    pdf_path: str
+     pdf_path: str
     page_index: int
     rect: Tuple[float, float, float, float]
-    sheet_name: Optional[str] = None  # optional but useful
+    sheet_name: Optional[str] = None
+    cell_ref: Optional[str] = None
 
     def to_json(self) -> dict:
         d = asdict(self)
 
         # Ensure rect is JSON-safe
         d["rect"] = list(self.rect)
-
         return d
 
     @staticmethod
@@ -41,6 +41,7 @@ class PdfLink:
                 page_index=int(d.get("page_index", 0)),
                 rect=rect_tuple,
                 sheet_name=d.get("sheet_name"),
+                cell_ref=d.get("cell_ref"),
             )
 
         except Exception:

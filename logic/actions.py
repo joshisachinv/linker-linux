@@ -56,7 +56,9 @@ def capture_link(excel_selection, current_page, pdf_file):
     new_link = PdfLink(
         pdf_path=pdf_file.name,
         page_index=current_page,
-        rect=rect
+        rect=rect,
+        sheet_name=sheet_name,
+        cell_ref=cell_ref,
     )
 
     if "links" not in st.session_state:
