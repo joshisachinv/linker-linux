@@ -24,13 +24,11 @@ def display_sidebar():
         if 'links' in st.session_state and st.session_state.links:
             st.divider()
             if st.button("💾 Save Links to Excel", use_container_width=True):
-                # We need to save to a buffer so the user can download it
                 output = io.BytesIO()
-                # Create a temporary copy of the file to save into
+                # Create temporary file to handle openpyxl saving
                 with open("temp_linked.xlsx", "wb") as f:
                     f.write(excel_file.getbuffer())
                 
-                # Use your links_store logic to embed data
                 save_links_into_excel("temp_linked.xlsx", st.session_state.links)
                 
                 with open("temp_linked.xlsx", "rb") as f:
@@ -44,5 +42,18 @@ def display_sidebar():
                 st.success("Links embedded! Click download above.")
 
         st.divider()
-        # ... (rest of your debug and clear cache code)
+        with st.expander("🔍 Developer Debug"):
+            st.write("Current Page:", st.session_state.get('current_page'))
+            editor_state = st.session_state.get("excel_editor", "Not found")
+            st.write("Excel Editor State:", editor_state)
+        
+        if 'links' in st.session_state and st.session_state.links:
+            with st.expander("📝 Current Session Links"):
+                for cell, link in st.session_state.links.items():
+                    st.write(f"**{cell}** → Page {link.page_index + 1}")
+
+        if st.button("🗑️ Clear Cache", use_container_width=True):
+            st.cache_data.clear()
+            st.success("Cache cleared!")
+
     return excel_file, pdf_file

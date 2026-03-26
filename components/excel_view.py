@@ -17,17 +17,25 @@ def display_excel_column(uploaded_file):
     if selected_sheet:
         df = excel_data[selected_sheet].fillna("")
         
-        # FIX: Removed 'selection_mode' to prevent the TypeError crash
-        # Clicks are still captured via the 'excel_editor' key in session_state
+        # 2. Modern Selection Mode (Requires Streamlit 1.35+)
         event = st.data_editor(
             df,
             key="excel_editor", 
             width="stretch",
             height=800,
-            disabled=False, 
+            selection_mode="single-cell",
+            disabled=True,
             hide_index=False
         )
         
+        # 3. Check for existing links
+        try:
+            links = try_load_embedded_links(uploaded_file)
+            if links:
+                st.success(f"Found {len(links)} embedded links.")
+        except:
+            pass
+            
         return selected_sheet, event
         
     return None, None
