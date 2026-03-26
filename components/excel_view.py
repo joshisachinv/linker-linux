@@ -43,15 +43,12 @@ def display_excel_column(uploaded_file):
             key="selected_excel_sheet",
         )
 
-        # Make dataframe Arrow-safe by converting displayed values to strings
         df_raw = excel_data[selected_sheet]
         df_raw = df_raw.where(df_raw.notna(), "")
         df = df_raw.astype(str)
 
-        # Excel-like headers: A, B, C...
         df.columns = [excel_col_name(i) for i in range(len(df.columns))]
 
-        # Add visible row numbers
         df_display = df.copy()
         df_display.insert(0, "__row__", range(1, len(df_display) + 1))
 
@@ -69,61 +66,24 @@ def display_excel_column(uploaded_file):
             "__row__",
             header_name="Row",
             pinned="left",
-            width=90,
+            width=70,
             editable=False,
         )
 
         gb.configure_grid_options(
             suppressRowClickSelection=False,
             rowSelection="single",
-            enableRangeSelection=True,
         )
-
-        cellstyle_jscode = JsCode(
-            """
-            function(params) {
-                const selected = params.api.getCellRanges();
-                if (!selected || selected.length === 0) {
-                    return {};
-                }
-
-                const range = selected[0];
-                if (!range.startRow || !range.endRow || !range.columns) {
-                    return {};
-                }
-
-                const startRow = Math.min(range.startRow.rowIndex, range.endRow.rowIndex);
-                const endRow = Math.max(range.startRow.rowIndex, range.endRow.rowIndex);
-                const cols = range.columns.map(col => col.getColId());
-
-                if (
-                    params.rowIndex >= startRow &&
-                    params.rowIndex <= endRow &&
-                    cols.includes(params.colDef.field)
-                ) {
-                    return {
-                        backgroundColor: "#DCEBFF",
-                        border: "2px solid #4A90E2"
-                    };
-                }
-
-                return {};
-            }
-            """
-        )
-
-        for col in df_display.columns:
-            gb.configure_column(col, cellStyle=cellstyle_jscode)
 
         grid_options = gb.build()
 
-        st.caption("Click a cell to select it for linking.")
+        st.caption("Select a row, then choose the target column below.")
 
         grid_response = AgGrid(
             df_display,
             gridOptions=grid_options,
             key=f"excel_grid_{selected_sheet}",
-            height=800,
+            height=420,
             width="100%",
             fit_columns_on_grid_load=False,
             allow_unsafe_jscode=True,
@@ -136,43 +96,49 @@ def display_excel_column(uploaded_file):
         selected_rows = grid_response.get("selected_rows", []) if grid_response else []
         selected_cell = None
 
-        grid_state = grid_response.get("grid_state") or {}
-        selected_ranges = grid_state.get("cellSelection", [])
+        if len(selected_rows) > 0:
+            selected_row = selected_rows[0]
 
-        if selected_ranges:
-            first_range = selected_ranges[0] or {}
+            # Row number may come back as "__row__"
+            row_number_1_based = selected_row.get("__row__", 1)
+            row_index = int(row_number_1_based) - 1
 
-            start_row = first_range.get("startRow", {})
-            if isinstance(start_row, dict):
-                row_index = start_row.get("rowIndex", 0)
-            else:
-                row_index = start_row or 0
+            col_pick_left, col_pick_right = st.columns([1, 2])
 
-            columns = first_range.get("columns", []) or []
-            if columns:
-                column_name = columns[0]
+            with col_pick_left:
+                selected_column = st.selectbox(
+                    "Column",
+                    options=list(df.columns),
+                    key=f"selected_column_{selected_sheet}",
+                )
 
-                if column_name != "__row__" and column_name in df.columns:
-                    column_index = list(df.columns).index(column_name)
-                    cell_value = df.iloc[row_index, column_index]
-                    cell_ref = f"{column_name}{row_index + 1}"
+            with col_pick_right:
+                cell_value = df.iloc[row_index, list(df.columns).index(selected_column)]
+                st.text_input(
+                    "Cell value",
+                    value=str(cell_value),
+                    disabled=True,
+                    key=f"selected_cell_value_{selected_sheet}",
+                )
 
-                    selected_cell = {
-                        "sheet_name": selected_sheet,
-                        "row_index": int(row_index),
-                        "column_index": int(column_index),
-                        "column_name": column_name,
-                        "cell_value": cell_value,
-                        "cell_ref": cell_ref,
-                    }
+            column_index = list(df.columns).index(selected_column)
+            cell_ref = f"{selected_column}{row_index + 1}"
 
-        if selected_cell is None and len(selected_rows) > 0:
-            st.info("Row selected. Click directly inside a cell to capture an exact cell.")
-        elif selected_cell:
+            selected_cell = {
+                "sheet_name": selected_sheet,
+                "row_index": int(row_index),
+                "column_index": int(column_index),
+                "column_name": selected_column,
+                "cell_value": cell_value,
+                "cell_ref": cell_ref,
+            }
+
             st.success(
                 f"Selected cell: {selected_cell['cell_ref']} "
                 f"(value: {selected_cell['cell_value']})"
             )
+        else:
+            st.info("Select a row in the grid to choose a cell.")
 
         return selected_sheet, selected_cell
 
