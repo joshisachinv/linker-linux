@@ -2,6 +2,7 @@ import streamlit as st
 import fitz
 from PIL import Image, ImageDraw # Added ImageDraw for highlights
 from streamlit_image_coordinates import streamlit_image_coordinates
+from logic.pdf_tools import draw_pdf_highlights, update_selection_state
 
 @st.cache_resource
 def load_pdf(file_bytes):
@@ -33,33 +34,14 @@ def display_pdf_column(uploaded_file):
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
     
     # 3. DRAW THE HIGHLIGHT IF AN AREA IS SELECTED
-    # This shows the user what they have just clicked
-    if 'active_rect_screen' in st.session_state:
-        draw = ImageDraw.Draw(img, "RGBA")
-        # Draw a semi-transparent yellow box
-        # Coordinates: [x0, y0, x1, y1]
-        draw.rectangle(
-            st.session_state['active_rect_screen'], 
-            fill=(255, 255, 0, 100), 
-            outline="red", 
-            width=3
-        )
-
-    st.caption("🎯 Click to highlight an area and link it to the Excel cell")
+    img = draw_pdf_highlights(img, st.session_state.get('active_rect_screen'))
     
     # 4. CAPTURE CLICK
+    st.caption("🎯 Click to highlight an area")
     coords = streamlit_image_coordinates(img, key="pdf_selector")
     
-    if coords:
-        # Save screen coords for drawing the highlight box next rerun
-        x, y = coords['x'], coords['y']
-        st.session_state['active_rect_screen'] = [x, y, x + 60, y + 25]
-        
-        # Save PDF-scale coords for the actual link (ignores zoom)
-        pdf_x, pdf_y = x / zoom, y / zoom
-        st.session_state['active_rect'] = (pdf_x, pdf_y, pdf_x + 50, pdf_y + 20)
-        
-        # Force rerun to show the highlight immediately
+    # 5. Handle Selection (Modularized)
+    if update_selection_state(coords, zoom):
         st.rerun()
 
     return page_num - 1, doc
