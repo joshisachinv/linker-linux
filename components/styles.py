@@ -5,7 +5,7 @@ def apply_custom_css():
     st.markdown("""
     <style>
         :root {
-            --app-header-h: 48px;
+            --app-header-h: 32px;
             --panel-radius: 16px;
             --panel-border: 1px solid rgba(49, 51, 63, 0.18);
             --panel-bg: rgba(255, 255, 255, 0.72);
@@ -13,9 +13,7 @@ def apply_custom_css():
         }
 
         .stAppViewContainer .main .block-container {
-            padding-top: calc(var(--app-header-h) + 1rem);
-            padding-bottom: 1rem;
-            max-width: 100%;
+            padding-top: calc(var(--app-header-h) + 0.5rem);
         }
 
         .app-header {
@@ -23,16 +21,17 @@ def apply_custom_css():
             top: 0;
             left: 0;
             right: 0;
-            height: var(--app-header-h);
+            height: 32px;
             display: flex;
             align-items: center;
-            padding: 0 1rem;
+            padding: 0 0.75rem;
             background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(49, 51, 63, 0.12);
             z-index: 9999;
-            font-size: 0.95rem;
-            font-weight: 700;
+            font-size: 0.85rem;
+            font-weight: 600;
             letter-spacing: 0.01em;
         }
 
