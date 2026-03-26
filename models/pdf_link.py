@@ -4,7 +4,7 @@ from typing import Tuple, Optional
 
 @dataclass
 class PdfLink:
-     pdf_path: str
+    pdf_path: str
     page_index: int
     rect: Tuple[float, float, float, float]
     sheet_name: Optional[str] = None
