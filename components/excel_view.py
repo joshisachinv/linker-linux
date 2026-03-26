@@ -21,7 +21,7 @@ def display_excel_column(uploaded_file):
         event = st.data_editor(
             df,
             key="excel_editor", 
-            use_container_width=True,
+            width="stretch",
             height=800,
             disabled=False, 
             hide_index=False

@@ -11,7 +11,7 @@ def display_sidebar():
         
         st.divider()
         
-        if st.button("🔗 Capture & Link Selection", use_container_width=True):
+        if st.button("🔗 Capture & Link Selection", width="stretch"):
             editor_state = st.session_state.get('excel_editor')
     
             if editor_state is not None: 
@@ -21,7 +21,7 @@ def display_sidebar():
                 
         if 'links' in st.session_state and st.session_state.links:
             st.divider()
-            if st.button("💾 Save Links to Excel", use_container_width=True):
+            if st.button("💾 Save Links to Excel", width="stretch"):
                 # Process in memory for Streamlit Cloud
                 output = io.BytesIO()
                 # Create a temp file on the server to work with openpyxl
@@ -36,11 +36,11 @@ def display_sidebar():
                         data=f.read(),
                         file_name=f"linked_{excel_file.name}",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True
+                        width="stretch"
                     )
 
         st.divider()
-        if st.button("🗑️ Clear Cache", use_container_width=True):
+        if st.button("🗑️ Clear Cache", width="stretch"):
             st.cache_data.clear()
             st.success("Cache cleared!")
 
