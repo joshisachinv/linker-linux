@@ -15,16 +15,17 @@ def excel_col_name(col_idx: int) -> str:
 
 
 def display_excel_column(uploaded_file):
-
     if uploaded_file is None:
         return None, None
 
     try:
-        # Read workbook
+        if hasattr(uploaded_file, "seek"):
+            uploaded_file.seek(0)
         excel_data = pd.read_excel(uploaded_file, sheet_name=None, header=None)
 
-        # Optional: load saved links metadata if your helper uses it
         try:
+            if hasattr(uploaded_file, "seek"):
+                uploaded_file.seek(0)
             embedded_links = try_load_embedded_links(uploaded_file)
             st.session_state["embedded_links"] = embedded_links
         except Exception:
@@ -42,13 +43,15 @@ def display_excel_column(uploaded_file):
             key="selected_excel_sheet",
         )
 
-        df_raw = excel_data[selected_sheet].fillna("")
+        # Make dataframe Arrow-safe by converting displayed values to strings
+        df_raw = excel_data[selected_sheet]
+        df_raw = df_raw.where(df_raw.notna(), "")
+        df = df_raw.astype(str)
 
-        # Create Excel-like headers: A, B, C...
-        df = df_raw.copy()
+        # Excel-like headers: A, B, C...
         df.columns = [excel_col_name(i) for i in range(len(df.columns))]
 
-        # Add a visible row number column
+        # Add visible row numbers
         df_display = df.copy()
         df_display.insert(0, "__row__", range(1, len(df_display) + 1))
 
@@ -70,14 +73,12 @@ def display_excel_column(uploaded_file):
             editable=False,
         )
 
-        # Enable single-cell selection with JS
         gb.configure_grid_options(
             suppressRowClickSelection=False,
             rowSelection="single",
             enableRangeSelection=True,
         )
 
-        # Highlight selected cell
         cellstyle_jscode = JsCode(
             """
             function(params) {
@@ -87,10 +88,13 @@ def display_excel_column(uploaded_file):
                 }
 
                 const range = selected[0];
+                if (!range.startRow || !range.endRow || !range.columns) {
+                    return {};
+                }
+
                 const startRow = Math.min(range.startRow.rowIndex, range.endRow.rowIndex);
                 const endRow = Math.max(range.startRow.rowIndex, range.endRow.rowIndex);
-
-                let cols = range.columns.map(col => col.getColId());
+                const cols = range.columns.map(col => col.getColId());
 
                 if (
                     params.rowIndex >= startRow &&
@@ -130,9 +134,8 @@ def display_excel_column(uploaded_file):
         )
 
         selected_rows = grid_response.get("selected_rows", [])
-
-        # Try to get selected cell using range selection info from AgGrid response
         selected_cell = None
+
         selected_ranges = grid_response.get("grid_state", {}).get("cellSelection", [])
 
         if selected_ranges:
@@ -143,7 +146,7 @@ def display_excel_column(uploaded_file):
             if columns:
                 column_name = columns[0]
 
-                if column_name != "__row__":
+                if column_name != "__row__" and column_name in df.columns:
                     column_index = list(df.columns).index(column_name)
                     cell_value = df.iloc[row_index, column_index]
                     cell_ref = f"{column_name}{row_index + 1}"
@@ -157,7 +160,6 @@ def display_excel_column(uploaded_file):
                         "cell_ref": cell_ref,
                     }
 
-        # Fallback: if range selection is unavailable, use selected row only
         if selected_cell is None and len(selected_rows) > 0:
             st.info("Row selected. Click directly inside a cell to capture an exact cell.")
         elif selected_cell:
