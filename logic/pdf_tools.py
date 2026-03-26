@@ -8,9 +8,18 @@ def draw_pdf_highlights(img, screen_rect, saved_links=None, show_saved=True, zoo
     """Draws both the active selection and previously saved links."""
     draw = ImageDraw.Draw(img, "RGBA")
     
-    # 1. Draw the "Active" (unsaved) highlight in Red/Yellow
+    #1. Draw "GHOST" or STARTING POINT
+    # If user clicked once but hasn't finished the box
+    if 'first_click' in st.session_state and not screen_rect:
+        x, y = st.session_state['first_click']
+        # Draw a small red target/crosshair where they started
+        draw.ellipse([x-3, y-3, x+3, y+3], fill="red", outline="white")
+        draw.line([x-10, y, x+10, y], fill="red", width=1)
+        draw.line([x, y-10, x, y+10], fill="red", width=1)
+
+    # Draw the COMPLETED ACTIVE RECT (Yellow)
     if screen_rect:
-        draw.rectangle(screen_rect, fill=(255, 255, 0, 100), outline="red", width=2)
+        draw.rectangle(screen_rect, fill=(255, 255, 0, 80), outline="red", width=2)
     
     # 2. Draw "Saved" highlights in Green if the toggle is ON
     if show_saved and saved_links:
