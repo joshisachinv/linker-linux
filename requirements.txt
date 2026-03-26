@@ -3,5 +3,6 @@ pandas
 openpyxl
 pymupdf
 pillow
-streamlit-image-coordinates
 streamlit-drawable-canvas
+streamlit-aggrid
+streamlit-image-coordinates

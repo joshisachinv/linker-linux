@@ -1,51 +1,98 @@
 import streamlit as st
-from components.styles import apply_custom_css, render_header
+from components.styles import apply_custom_css, render_header, render_panel_start, render_panel_end
 from components.sidebar import display_sidebar
 from components.excel_view import display_excel_column
 from components.pdf_view import display_pdf_column
 
-# 1. SETUP
-st.set_page_config(layout="wide", page_title="Excel ↔ PDF Linker")
+st.set_page_config(
+    page_title="Excel ↔ PDF Linker",
+    page_icon="🔗",
+    layout="wide",
+)
+
 apply_custom_css()
 render_header("Excel ↔ PDF Linker")
 
-# 2. INITIALIZE SESSION STATE
-if 'excel_file' not in st.session_state:
-    st.session_state.excel_file = None
-if 'pdf_file' not in st.session_state:
-    st.session_state.pdf_file = None
+# Session state
+defaults = {
+    "excel_file": None,
+    "pdf_file": None,
+    "excel_sig": None,
+    "pdf_sig": None,
+    "current_page": 0,
+    "editor_event": None,
+    "links": {},
+    "pane_ratio": 45,  # Excel width %
+}
+for k, v in defaults.items():
+    if k not in st.session_state:
+        st.session_state[k] = v
 
-# 3. SIDEBAR (Run this BEFORE the layout to capture uploads immediately)
+
+def file_sig(uploaded):
+    if uploaded is None:
+        return None
+    return (uploaded.name, uploaded.size)
+
+
 uploaded_excel, uploaded_pdf = display_sidebar()
 
-# Change detection: If files are new, update state and rerun
-if uploaded_excel != st.session_state.excel_file or uploaded_pdf != st.session_state.pdf_file:
+new_excel_sig = file_sig(uploaded_excel)
+new_pdf_sig = file_sig(uploaded_pdf)
+
+if new_excel_sig != st.session_state.excel_sig or new_pdf_sig != st.session_state.pdf_sig:
     st.session_state.excel_file = uploaded_excel
     st.session_state.pdf_file = uploaded_pdf
+    st.session_state.excel_sig = new_excel_sig
+    st.session_state.pdf_sig = new_pdf_sig
     st.rerun()
 
-# 4. MAIN SCREEN LAYOUT
-col1, col2 = st.columns(2) 
-sheet_name, editor_event = None, None
-current_page, pdf_doc = 0, None
+# Top toolbar
+toolbar_left, toolbar_right = st.columns([3, 2])
+
+with toolbar_left:
+    st.caption("Link spreadsheet cells to PDF regions.")
+
+with toolbar_right:
+    st.session_state.pane_ratio = st.slider(
+        "Pane split",
+        min_value=30,
+        max_value=70,
+        value=st.session_state.pane_ratio,
+        step=5,
+        key="pane_ratio_slider",
+    )
+
+left_ratio = st.session_state.pane_ratio
+right_ratio = 100 - left_ratio
+
+col1, col2 = st.columns([left_ratio, right_ratio], gap="small")
+
+sheet_name = None
+cell_event = None
+current_page = st.session_state.current_page
 
 with col1:
+    render_panel_start("Excel Viewer")
     if st.session_state.excel_file:
-        sheet_name, editor_event = display_excel_column(st.session_state.excel_file)
-        st.session_state['editor_event'] = editor_event
+        sheet_name, cell_event = display_excel_column(st.session_state.excel_file)
+        st.session_state["excel_editor"] = cell_event
     else:
-        st.info("Please upload an Excel file in the sidebar.")
+        st.info("Upload an Excel file in the sidebar.")
+    render_panel_end()
 
 with col2:
+    render_panel_start("PDF Viewer")
     if st.session_state.pdf_file:
-        current_page, pdf_doc = display_pdf_column(st.session_state.pdf_file)
-        st.session_state['current_page'] = current_page
+        current_page, _ = display_pdf_column(st.session_state.pdf_file)
+        st.session_state["current_page"] = current_page
     else:
-        st.info("Please upload a PDF file in the sidebar.")
+        st.info("Upload a PDF file in the sidebar.")
+    render_panel_end()
 
-# 5. FOOTER / STATUS
 if st.session_state.excel_file and st.session_state.pdf_file:
     st.divider()
     display_page = (current_page + 1) if current_page is not None else 1
     display_sheet = sheet_name if sheet_name else "Unknown Sheet"
-    st.info(f"Ready to link: {display_sheet} <--> Page {display_page}")
+    st.caption(f"Ready to link: **{display_sheet}** ↔ **Page {display_page}**")
+    
