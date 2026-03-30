@@ -1,3 +1,5 @@
+import os
+import tempfile
 import streamlit as st
 from components.styles import render_sidebar_header, render_status_card
 from logic.actions import capture_link
@@ -6,7 +8,6 @@ from logic.links_store import save_links_into_excel
 def display_sidebar():
     with st.sidebar:
         # Styled Header
-        render_sidebar_header("Linker Pro")
         st.caption("Precision Evidence Linking System")
 
         # Files Section
