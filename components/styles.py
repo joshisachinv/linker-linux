@@ -131,7 +131,7 @@ def apply_custom_css():
         
         /* Targets the individual container for every widget (buttons, toggles, etc) */
         .element-container {
-            margin-bottom: 0.2rem !important;
+            margin-bottom: 1rem !important;
         }
 
         /* DIVIDER COMPRESSION */
