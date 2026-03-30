@@ -1,102 +1,91 @@
 import streamlit as st
 
-
 def apply_custom_css():
     st.markdown("""
     <style>
+        /* 1. Global Layout Enhancements */
         :root {
-            --app-header-h: 28px;
-            --panel-radius: 16px;
-            --panel-border: 1px solid rgba(49, 51, 63, 0.18);
-            --panel-bg: rgba(255, 255, 255, 0.72);
-            --panel-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            --primary: #3b82f6;
+            --sidebar-bg: #F8FAFC;
+            --panel-radius: 12px;
+            --header-height: 45px;
         }
 
         .stAppViewContainer .main .block-container {
-            padding-top: calc(var(--app-header-h) + 0.2rem);
+            padding-top: 4rem;
+            padding-bottom: 1rem;
         }
 
-        .app-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            padding: 0 0.6rem;
-            background: rgba(255, 255, 255, 0.88);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(49, 51, 63, 0.12);
-            z-index: 9999;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.01em;
+        /* 2. Modern Sidebar Header & Navigation */
+        [data-testid="stSidebarNav"] {
+            padding-top: 2rem;
+        }
+        
+        .sidebar-header {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
         }
 
-        section[data-testid="stSidebar"] {
-            border-right: 1px solid rgba(49, 51, 63, 0.10);
+        /* 3. Status Cards for Sidebar */
+        .status-card {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        section[data-testid="stSidebar"] > div {
-            padding-top: calc(var(--app-header-h) + 0.5rem);
-        }
-
-        .panel {
-            background: var(--panel-bg);
-            border: var(--panel-border);
-            border-radius: var(--panel-radius);
-            box-shadow: var(--panel-shadow);
-            padding-top: 0.4rem !important;
-            padding-bottom: 0.4rem !important;
-        }
-
-        .panel-title {
-            font-size: 0.76rem;
+        .status-label {
+            font-size: 0.65rem;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            color: #64748b;
             text-transform: uppercase;
-            color: #3b82f6;
-            margin-bottom: 0.2rem !important;
+            letter-spacing: 0.05em;
         }
 
-        .toolbar-caption {
-            color: rgba(49, 51, 63, 0.75);
-            font-size: 0.9rem;
+        .status-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Make dataframe / grid area feel denser */
-        .stDataFrame, .stTable {
-            border-radius: 12px;
-            overflow: hidden;
+        /* 4. Panel & Column Headers */
+        .panel-header {
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
         }
     </style>
     """, unsafe_allow_html=True)
 
+def render_sidebar_header(title: str):
+    st.sidebar.markdown(f'<div class="sidebar-header">{title}</div>', unsafe_allow_html=True)
 
-def render_header(title: str):
-    st.markdown(f'<div class="app-header">{title}</div>', unsafe_allow_html=True)
+def render_status_card(label: str, value: str, is_ready: bool):
+    icon = "✅" if is_ready else "⚪"
+    st.sidebar.markdown(f"""
+        <div class="status-card">
+            <div class="status-label">{label}</div>
+            <div class="status-value">
+                <span>{value}</span>
+                <span>{icon}</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-
-def render_panel_start(title: str):
-    st.markdown(f'<div class="panel"><div class="panel-title">{title}</div>', unsafe_allow_html=True)
-
-def render_panel_end():
-    st.markdown('</div>', unsafe_allow_html=True)
-
-def render_sidebar_section(title):
-    st.markdown(
-        f"""
-        <div style="
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-top: 0.25rem;
-            margin-bottom: 0.35rem;
-            color: #3b82f6;
-        ">{title}</div>
-        """,
-        unsafe_allow_html=True,
-    )
+def render_column_header(title: str):
+    st.markdown(f'<div class="panel-header">{title}</div>', unsafe_allow_html=True)

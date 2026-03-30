@@ -85,7 +85,7 @@ cell_event = None
 current_page = st.session_state.current_page
 
 with col1:
-    render_panel_start("Excel Viewer")
+    render_column_header("Excel Workbench")
     if st.session_state.excel_file:
         sheet_name, cell_event = display_excel_column(st.session_state.excel_file)
         st.session_state["excel_editor"] = cell_event
@@ -94,7 +94,7 @@ with col1:
     render_panel_end()
 
 with col2:
-    render_panel_start("PDF Viewer")
+    render_column_header("PDF Evidence")
     if st.session_state.pdf_file:
         current_page, _ = display_pdf_column(st.session_state.pdf_file)
         st.session_state["current_page"] = current_page
