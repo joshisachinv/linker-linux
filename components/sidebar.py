@@ -20,7 +20,7 @@ def display_sidebar():
             pdf_file = st.file_uploader("Document", type=["pdf"], key="pdf_up")
 
         # System Status Cards
-        render_status_card("Excel File", excel_file.name if excel_file else "Not Loaded", excel_file is not None)
+       
         render_status_card("PDF File", pdf_file.name if pdf_file else "Not Loaded", pdf_file is not None)
 
         st.divider()

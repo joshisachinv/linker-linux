@@ -17,6 +17,7 @@ def display_excel_column(uploaded_file):
         excel_data = pd.read_excel(uploaded_file, sheet_name=None, header=None)
 
         try:
+            render_status_card("Excel File", excel_file.name if excel_file else "Not Loaded", excel_file is not None)
             if hasattr(uploaded_file, "seek"):
                 uploaded_file.seek(0)
             st.session_state["embedded_links"] = try_load_embedded_links(uploaded_file)
