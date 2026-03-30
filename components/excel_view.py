@@ -5,7 +5,7 @@ from logic.links_store import try_load_embedded_links
 from logic.excel_helpers import get_visible_sheets, prepare_display_dataframe
 from logic.excel_grid import render_excel_grid
 from logic.excel_selection import build_selected_cell_from_row_and_column
-
+from components.styles import render_status_card
 
 def display_excel_column(uploaded_file):
     if uploaded_file is None:

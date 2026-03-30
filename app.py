@@ -1,5 +1,5 @@
 import streamlit as st
-from components.styles import apply_custom_css, render_header, render_column_header
+from components.styles import apply_custom_css, render_header, render_column_header, render_status_card
 from components.sidebar import display_sidebar
 from components.excel_view import display_excel_column
 from components.pdf_view import display_pdf_column
