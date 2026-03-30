@@ -4,9 +4,8 @@ import fitz
 import streamlit as st
 from PIL import Image
 from streamlit_image_coordinates import streamlit_image_coordinates
-from components.styles import render_status_card
+from components.sidebar import pdf_file
 from logic.pdf_tools import draw_saved_highlights, handle_image_selection
-
 
 @st.cache_data(show_spinner=False)
 def get_pdf_page_count(file_bytes: bytes) -> int:
