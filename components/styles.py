@@ -7,6 +7,18 @@ def apply_custom_css():
     """
     st.markdown("""
     <style>
+        * ============================================================
+           1. CORE OVERLAP FIX
+           Forces Streamlit's top header to be transparent and 
+           behind our custom toolbar.
+           ============================================================ */
+        
+        [data-testid="stHeader"] {
+            background-color: rgba(0,0,0,0) !important;
+            border-bottom: none !important;
+            z-index: 0 !important; /* Move system bar behind everything */
+        }
+        
         /* ============================================================
            1. GLOBAL LAYOUT & SPACING
            Reclaims vertical space and reduces default gaps.
@@ -14,24 +26,11 @@ def apply_custom_css():
         
         /* Reduce main container padding to move content higher up */
         .block-container { 
-            padding-top: 1.5rem !important; 
+            padding-top: 2.5rem !important; 
             padding-bottom: 0rem !important; 
             max-width: 98% !important;
         }
         
-        /* 2. Fix the Toolbar Overlap */
-        /* Streamlit's system header is z-index 1000. We set our content just below. */
-        [data-testid="stHeader"] {
-            background-color: rgba(255, 255, 255, 0) !important;
-            border-bottom: none !important;
-            z-index: 0 !important; /* Move system bar behind content if needed */
-        }    
-        
-        /* Tighten gaps between all vertical elements (widgets, text, etc) */
-        [data-testid="stVerticalBlock"] { 
-            gap: 0.1rem !important; 
-        }
-
         /* ============================================================
            2. TOP TOOLBAR (GLOBAL CONTROLS)
            Styles the horizontal row containing Link, Sheet, Page, and Zoom.
@@ -43,9 +42,10 @@ def apply_custom_css():
             border: 1px solid #e2e8f0;
             border-radius: 6px;
             padding: 8px 12px !important;
-            margin-bottom: 15px !important;
+            margin-bottom: 20px !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             z-index: 1001 !important;
+            position: relative;
             align-items: center;
         }
 
@@ -73,7 +73,7 @@ def apply_custom_css():
             letter-spacing: 0.08em;
             border-left: 3px solid #2563eb;
             padding-left: 8px;
-            margin-top: -5px;
+            margin-top: 5px;
             margin-bottom: 8px !important;
         }
 
