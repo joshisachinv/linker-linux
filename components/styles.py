@@ -127,10 +127,35 @@ def apply_custom_css():
         }
 
         /* Reduce padding inside expanders (Data Sources) */
-        .st-emotion-cache {
-            padding: 0.5rem 1rem !important;
-            gap:0.5rem
-            margin-top: 0px !important;
+        /* Target the 'Data Sources' expander header and internal padding */
+        [data-testid="stExpander"] {
+            margin-bottom: 0px !important;
+        }
+
+        [data-testid="stExpander"] > details > summary {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+
+        /* Target the 'Workbook' and 'Document' labels within the sidebar */
+        [data-testid="stFileUploader"] {
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+            margin-top: -5px !important; /* Pull up towards the header */
+        }
+
+        /* Reduces the spacing for the text within the file uploader */
+        [data-testid="stFileUploader"] section {
+            padding: 4px 8px !important; /* Tightens the 'Drag and drop' area */
+        }
+
+        /* The global fix for ALL vertical spacing between sidebar elements */
+[       data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+            gap: 0.1rem !important;
+        }
+
+        /* Target all 'emotion cache' containers specifically for bottom margin */
+        div[class*="st-emotion-cache"] {
             margin-bottom: 0px !important;
         }
         
