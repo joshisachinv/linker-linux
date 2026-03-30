@@ -19,6 +19,14 @@ def apply_custom_css():
             max-width: 98% !important;
         }
         
+        /* 2. Fix the Toolbar Overlap */
+        /* Streamlit's system header is z-index 1000. We set our content just below. */
+        [data-testid="stHeader"] {
+            background-color: rgba(255, 255, 255, 0) !important;
+            border-bottom: none !important;
+            z-index: 0 !important; /* Move system bar behind content if needed */
+        }    
+        
         /* Tighten gaps between all vertical elements (widgets, text, etc) */
         [data-testid="stVerticalBlock"] { 
             gap: 0.1rem !important; 
@@ -34,8 +42,10 @@ def apply_custom_css():
             background-color: #f8faff;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 6px 12px !important;
-            margin-bottom: 12px !important;
+            padding: 8px 12px !important;
+            margin-bottom: 15px !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            z-index: 1001 !important;
             align-items: center;
         }
 
@@ -46,7 +56,7 @@ def apply_custom_css():
 
         /* Reduce the height of inputs in the toolbar */
         .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
-            height: 32px !important;
+            height: 30px !important;
             font-size: 0.85rem !important;
         }
 
