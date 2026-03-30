@@ -85,6 +85,8 @@ def apply_custom_css():
         /* Forces all vertical stacks to be ultra-tight */
         [data-testid="stSidebar"] [data-testid="stVerticalBlock"] { 
             gap: 0rem !important; 
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
         }
         
         /* Sidebar Title Gradient */
