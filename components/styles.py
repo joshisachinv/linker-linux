@@ -129,6 +129,7 @@ def apply_custom_css():
         /* Reduce padding inside expanders (Data Sources) */
         .st-emotion-cache-p5msec {
             padding: 0.5rem 1rem !important;
+            gap:0.5rem
             margin-top: 0px !important;
             margin-bottom: 0px !important;
         }
