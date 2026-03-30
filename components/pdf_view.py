@@ -31,7 +31,10 @@ def display_pdf_column(uploaded_file):
         total_pages = get_pdf_page_count(file_bytes)
 
         nav_col, zoom_col = st.columns([1, 2])
-
+        
+        raw_current_page = st.session_state.get("current_page")
+        safe_current_page = raw_current_page if raw_current_page is not None else 0
+        
         page_num = nav_col.number_input(
             "Page",
             min_value=1,
