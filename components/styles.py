@@ -151,6 +151,9 @@ def apply_custom_css():
         /* Make sliders more compact */
         .stSlider {
             margin-top: -10px !important;
+            margin-bottom: 0.4rem !important;
+            border: 0;
+            border-top: 1px solid #eee;
         }
 
         /* Ensure Sidebar Buttons are full width */
