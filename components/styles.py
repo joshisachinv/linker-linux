@@ -91,7 +91,14 @@ def apply_custom_css():
             color: #2563eb
         }
         
-
+        [data-testid="stVerticalBlock"] { 
+            gap: 0rem !important; 
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+            padding: 2px 2px !important;
+            color: #2563eb
+        }
+        
         [data-testid="stAppToolbar"] { 
             gap: 0rem !important; 
             margin-top: 0px !important;
