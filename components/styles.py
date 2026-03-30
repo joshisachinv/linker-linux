@@ -87,6 +87,7 @@ def apply_custom_css():
             gap: 0rem !important; 
             margin-top: 0px !important;
             margin-bottom: 0px !important;
+            padding: 8px 8px !important;
         }
         
         /* Sidebar Title Gradient */
