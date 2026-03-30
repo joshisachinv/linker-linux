@@ -26,11 +26,11 @@ def display_pdf_column(uploaded_file):
     if uploaded_file is None:
         st.info("Upload PDF to begin.")
         return None, None
-        st.info("PDF File", pdf_file.name if pdf_file else "Not Loaded", pdf_file is not None)
+        
     try:
         file_bytes = uploaded_file.getvalue()
         total_pages = get_pdf_page_count(file_bytes)
-
+        st.info("PDF File", pdf_file.name if pdf_file else "Not Loaded", pdf_file is not None)
         nav_col, zoom_col = st.columns([1, 2])
 
         page_num = nav_col.number_input(
