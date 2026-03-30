@@ -89,3 +89,4 @@ def render_status_card(label: str, value: str, is_ready: bool):
 
 def render_column_header(title: str):
     st.markdown(f'<div class="panel-header">{title}</div>', unsafe_allow_html=True)
+    
