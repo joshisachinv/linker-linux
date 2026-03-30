@@ -152,8 +152,8 @@ def apply_custom_css():
         .stSlider {
             margin-top: -10px !important;
             margin-bottom: 0.4rem !important;
-            border: 0;
-            border-top: 1px solid #eee;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
 
         /* Ensure Sidebar Buttons are full width */
