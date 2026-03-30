@@ -42,6 +42,20 @@ def apply_custom_css():
             border: 1px solid #e0e0e0;
             margin-bottom: 10px;
         }
+
+        /* 1. Ultra-dense toolbar container */
+        [data-testid="stHorizontalBlock"] {
+            background: #f8faff;
+            border-radius: 4px;
+            padding: 4px 8px !important;
+            margin-bottom: 8px !important;
+        }
+
+        /* 2. Remove the space reserved for hidden labels */
+            .stSelectbox label, .stNumberInput label, .stSlider label {
+            display: none !important;
+        }
+
     </style>
     """, unsafe_allow_html=True)
 

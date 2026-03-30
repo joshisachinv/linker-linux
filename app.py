@@ -21,27 +21,38 @@ if not st.session_state.get("full_screen_mode", False):
     render_header("Excel ↔ PDF Linker")
     
     # Single row for all primary actions
-    t_col1, t_col2, t_col3 = st.columns([2, 5, 2])
+    t_cols = st.columns([2, 2.5, 2, 2, 1.5], gap="small")
     
-    with t_col1:
+    with t_cols[0]:
         if st.button("🔗 Finalize Link", type="primary", use_container_width=True):
             from logic.actions import capture_link
             capture_link(st.session_state.excel_editor, st.session_state.current_page, uploaded_pdf)
 
-    with t_col2:
-        # Integrated PDF Controls (Page, Zoom) and Pane Split
-        c1, c2, c3 = st.columns([1, 2, 2])
-        with c1:
-            page_input = st.number_input("PG", 1, 1000, st.session_state.current_page + 1, step=1, label_visibility="collapsed")
-            st.session_state.current_page = page_input - 1
-        with c2:
-            st.session_state.pdf_zoom = st.slider("ZOOM", 1.0, 4.0, st.session_state.get("pdf_zoom", 2.0), 0.1, label_visibility="collapsed")
-        with c3:
-            st.session_state.pane_ratio = st.slider("SPLIT", 30, 70, st.session_state.pane_ratio, 5, label_visibility="collapsed")
+    with t_cols[1]:
+        # Moved from excel_view.py to Toolbar
+        if st.session_state.excel_file:
+            import pandas as pd
+            from logic.excel_helpers import get_visible_sheets
+            # Load sheets for the toolbar dropdown
+            xl = pd.read_excel(st.session_state.excel_file, sheet_name=None, header=None)
+            display_sheets = get_visible_sheets(xl)
+            st.session_state.selected_sheet = st.selectbox(
+                "Sheet", options=display_sheets, label_visibility="collapsed", key="toolbar_sheet_selector"
+            )
 
-    with t_col3:
-        st.markdown(f"<div style='text-align:right; padding-top:5px; font-size:0.8rem; color:#3b82f6;'><b>Links: {len(st.session_state.links)}</b></div>", unsafe_allow_html=True)
+    with t_cols[2]:
+        # Page Navigation
+        page_input = st.number_input("PG", 1, 1000, st.session_state.current_page + 1, step=1, label_visibility="collapsed")
+        st.session_state.current_page = page_input - 1
 
+    with t_cols[3]:
+        # Zoom Control
+        st.session_state.pdf_zoom = st.slider("ZOOM", 1.0, 4.0, st.session_state.get("pdf_zoom", 2.0), 0.1, label_visibility="collapsed")
+
+    with t_cols[4]:
+        # Pane Split
+        st.session_state.pane_ratio = st.slider("SPLIT", 30, 70, st.session_state.pane_ratio, 5, label_visibility="collapsed")
+        
 # 4. MAIN VIEWPORT
 col1, col2 = st.columns([st.session_state.pane_ratio, 100 - st.session_state.pane_ratio], gap="small")
 
