@@ -188,10 +188,10 @@ def apply_custom_css():
 
         /* 1. Global Button Styling */
         button {
-            height: 32px !important;
+            height: 18px !important;
             padding-top: 0px !important;
             padding-bottom: 0px !important;
-            line-height: 32px !important;
+            line-height: 18px !important;
             font-size: 0.85rem !important;
             font-weight: 600 !important;
             border-radius: 6px !important;
