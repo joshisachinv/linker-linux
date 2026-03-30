@@ -41,8 +41,8 @@ def apply_custom_css():
             background-color: #f8faff;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 8px 8px !important;
-            margin-bottom: 10px !important;
+            padding: 4px 4px !important;
+            margin-bottom: 0px !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             z-index: 1001 !important;
             position: relative;
@@ -83,7 +83,7 @@ def apply_custom_css():
            ============================================================ */
         
         /* Forces all vertical stacks to be ultra-tight */
-        [data-testid="stSidebar"] [data-testid="stVerticalBlock"] [data-testid="stAppToolbar"] { 
+        [data-testid="stSidebar"] [data-testid="stVerticalBlock"] { 
             gap: 0rem !important; 
             margin-top: 0px !important;
             margin-bottom: 0px !important;
@@ -91,6 +91,14 @@ def apply_custom_css():
             color: #2563eb
         }
         
+
+        [data-testid="stAppToolbar"] { 
+            gap: 0rem !important; 
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+            padding: 4px 4px !important;
+            color: #2563eb
+        }
         /* Sidebar Title Gradient */
         .sidebar-header {
             font-size: 1.4rem;
