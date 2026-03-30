@@ -100,6 +100,7 @@ with col1:
 with col2:
     render_column_header("PDF Evidence")
     if st.session_state.pdf_file:
+        render_status_card("PDF File", pdf_file.name if pdf_file else "Not Loaded", pdf_file is not None)
         current_page, _ = display_pdf_column(st.session_state.pdf_file)
         st.session_state["current_page"] = current_page
     else:
