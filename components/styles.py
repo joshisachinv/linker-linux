@@ -119,6 +119,20 @@ def apply_custom_css():
             align-items: center;
         }
 
+        /* Target the specific emotion cache class for dividers */
+        .st-emotion-cache-1h1td79 {
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+        }
+
+        /* Alternative: Target all dividers globally for consistency */
+        hr {
+            margin-top: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+
         /* ============================================================
            5. WIDGET OVERRIDES
            Fine-tuning specific Streamlit components for density.
