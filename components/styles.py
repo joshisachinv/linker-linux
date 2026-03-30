@@ -2,309 +2,138 @@ import streamlit as st
 
 def apply_custom_css():
     """
-    Applies a professional, high-density CSS theme to the application.
-    Optimized for document inspection and precision linking.
+    Consolidated High-Density CSS Theme.
+    Optimized to reclaim vertical space and unify workstation aesthetics.
     """
     st.markdown("""
     <style>
-        * ============================================================
-           1. CORE OVERLAP FIX
-           Forces Streamlit's top header to be transparent and 
-           behind our custom toolbar.
-           ============================================================ */
-        
-        [data-testid="stHeader"] {
-            background-color: rgba(0,0,0,0) !important;
-            border-bottom: none !important;
-            z-index: 0 !important; /* Move system bar behind everything */
-        }
-        
-        /* ============================================================
-           1. GLOBAL LAYOUT & SPACING
-           Reclaims vertical space and reduces default gaps.
-           ============================================================ */
-        
-        /* Reduce main container padding to move content higher up */
+        /* 1. GLOBAL LAYOUT & SPACING */
         .block-container { 
-            padding-top: 2.5rem !important; 
+            padding-top: 1.5rem !important; 
             padding-bottom: 0rem !important; 
             max-width: 98% !important;
         }
-        
-        /* ============================================================
-           2. TOP TOOLBAR (GLOBAL CONTROLS)
-           Styles the horizontal row containing Link, Sheet, Page, and Zoom.
-           ============================================================ */
-        
-        /* Create a subtle 'docked' look for the toolbar */
+
+        /* Forces all vertical stacks (main & sidebar) to be ultra-tight */
+        [data-testid="stVerticalBlock"] { 
+            gap: 0rem !important; 
+        }
+
+        /* Targets every widget container to 'crush' default margins */
+        .element-container {
+            margin-top: 0.1rem !important;
+            margin-bottom: 0.1rem !important;
+        }
+
+        /* Move Streamlit header behind content to prevent overlap */
+        [data-testid="stHeader"] {
+            background-color: rgba(0,0,0,0) !important;
+            border-bottom: none !important;
+            z-index: 0 !important;
+        }
+
+        /* 2. DOCKED TOP TOOLBAR */
         div[data-testid="stHorizontalBlock"]:has(button) {
             background-color: #f8faff;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 2px 2px !important;
-            margin-bottom: 0px !important;
+            padding: 4px 10px !important;
+            margin-bottom: 12px !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             z-index: 1001 !important;
             position: relative;
             align-items: center;
         }
 
-        /* Hide labels for toolbar widgets to save height (tooltips handle info) */
-        [data-testid="stHorizontalBlock"] label {
+        /* Collapse all labels in the toolbar and sidebar for density */
+        [data-testid="stHorizontalBlock"] label, [data-testid="stSidebar"] label {
             display: none !important;
         }
 
-        /* Reduce the height of inputs in the toolbar */
-        .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
-            height: 30px !important;
-            font-size: 0.85rem !important;
+        /* 3. BUTTONS & INPUTS */
+        button {
+            height: 26px !important;
+            min-height: 26px !important;
+            padding: 0px 12px !important;
+            line-height: 26px !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            border-radius: 4px !important;
         }
 
-        /* ============================================================
-           3. PANEL HEADERS (EXCEL & PDF LABELS)
-           Provides clear visual anchors for the two main work areas.
-           ============================================================ */
+        button[kind="primary"] {
+            background-color: #2563eb !important;
+            border: none !important;
+        }
+
+        .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
+            height: 26px !important;
+            font-size: 0.8rem !important;
+        }
+
+        /* 4. SIDEBAR COMPONENTS */
+        [data-testid="stSidebar"] {
+            background-color: #f8faff !important;
+        }
+
+        /* Tighten Expanders (Data Sources) */
+        [data-testid="stExpander"] {
+            margin-bottom: 0px !important;
+        }
         
+        [data-testid="stExpander"] summary {
+            padding: 2px 8px !important;
+        }
+
+        /* Tighten File Uploaders (Workbook/Document) */
+        [data-testid="stFileUploader"] section {
+            padding: 4px 8px !important;
+        }
+
+        /* Status Cards Glassmorphism */
+        .status-card {
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 6px 10px;
+            border: 1px solid #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        /* 5. TITLES & HEADERS */
         .panel-header {
             font-size: 0.7rem !important;
             font-weight: 800;
-            color: #2563eb; /* Primary Blue */
+            color: #2563eb;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
             border-left: 3px solid #2563eb;
             padding-left: 8px;
-            margin-top: 5px;
-            margin-bottom: 8px !important;
+            margin-bottom: 6px !important;
         }
 
-        /* ============================================================
-           4. SIDEBAR & STATUS CARDS
-           Professional styling for the 'Setup' and 'Export' area.
-           ============================================================ */
-        
-        /* Forces all vertical stacks to be ultra-tight */
-        [data-testid="stSidebar"] [data-testid="stVerticalBlock"] { 
-            gap: 0rem !important; 
-            margin-top: 0px !important;
-            margin-bottom: 0px !important;
-            padding: 2px 2px !important;
-            color: #2563eb
-        }
-        
-        [data-testid="stVerticalBlock"] { 
-            gap: 0rem !important; 
-            margin-top: 0px !important;
-            margin-bottom: 0px !important;
-            padding: 2px 2px !important;
-            color: #2563eb
-        }
-        
-        [data-testid="stAppToolbar"] { 
-            gap: 0rem !important; 
-            margin-top: 0px !important;
-            margin-bottom: 0px !important;
-            padding: 0px 0px !important;
-            color: #2563eb
-        }
-        /* Sidebar Title Gradient */
         .sidebar-header {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 800;
             background: linear-gradient(45deg, #1e40af, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
         }
 
-        /* Glassmorphism-style Status Cards */
-        .status-card {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 4px 4px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-            margin-bottom: 6px;
-        }
-
-        .status-label {
-            font-size: 0.6rem;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        .status-value {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #0f172a;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Reduce padding inside expanders (Data Sources) */
-        /* Target the 'Data Sources' expander header and internal padding */
-        [data-testid="stExpander"] {
-            margin-bottom: 0px !important;
-        }
-
-        [data-testid="stExpander"] > details > summary {
-            padding-top: 2px !important;
-            padding-bottom: 2px !important;
-        }
-
-        /* Target the 'Workbook' and 'Document' labels within the sidebar */
-        [data-testid="stFileUploader"] {
-            padding-top: 0px !important;
-            padding-bottom: 0px !important;
-            margin-top: -5px !important; /* Pull up towards the header */
-        }
-
-        /* Reduces the spacing for the text within the file uploader */
-        [data-testid="stFileUploader"] section {
-            padding: 4px 4px !important; /* Tightens the 'Drag and drop' area */
-        }
-
-        /* The global fix for ALL vertical spacing between sidebar elements */
-[       data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
-            gap: 0.1rem !important;
-        }
-
-        /* Target all 'emotion cache' containers specifically for bottom margin */
-        div[class*="st-emotion-cache"] {
-            margin-bottom: 0px !important;
-        }
-        
-        /* Targets the individual container for every widget (buttons, toggles, etc) */
-        .element-container {
-            margin-top: 0.4rem !important;
-            margin-bottom: 0.4rem !important;
-        }
-
-        /* DIVIDER COMPRESSION */
         hr {
             margin-top: 0.4rem !important;
             margin-bottom: 0.4rem !important;
-            border: 0;
-            border-top: 1px solid #eee;
         }
-
-        /* ============================================================
-           5. WIDGET OVERRIDES
-           Fine-tuning specific Streamlit components for density.
-           ============================================================ */
-        
-        /* Make sliders more compact */
-        .stSlider {
-            margin-top: -10px !important;
-            margin-bottom: 0.4rem !important;
-            font-size: 0.4rem;
-            font-weight: 600;
-        }
-
-        /* Ensure Sidebar Buttons are full width */
-        [data-testid="stSidebar"] button {
-            width: 100% !important;
-            border-radius: 6px !important;
-        }
-
-        /* Style Captions (Instructions) */
-        .stCaption {
-            font-size: 0.72rem !important;
-            color: #64748b !important;
-            line-height: 1.2 !important;
-        }
-
-        .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
-            height: 28px !important; /* Ultra slim */
-            font-size: 0.8rem !important;
-        }
-
-        /* Reduce size of the toggle and text in sidebar */
-        [data-testid="stSidebar"] .stCheckbox, [data-testid="stSidebar"] .stToggle {
-            padding-bottom: 0px !important;
-            margin-bottom: -5px !important;
-        }
-
-
-        /* ============================================================
-        BUTTON PROPERTIES & SPACING
-        Targets all buttons to ensure a high-density, uniform look.
-        ============================================================ */
-
-        /* 1. Global Button Styling */
-        button {
-            height: 26px !important;       /* Reduced from default ~38px */
-            min-height: 26px !important;   /* Overrides base minimums */
-            padding-top: 0px !important;
-            padding-bottom: 0px !important;
-            line-height: 18px !important;
-            font-size: 0.85rem !important;
-            font-weight: 600 !important;
-            border-radius: 6px !important;
-            transition: all 0.2s ease !important;
-            margin-top: 0px !important;
-            margin-bottom: 0px !important;
-        }
-
-        /* 2. Primary Button (Finalize Link) */
-        button[kind="primary"] {
-            background-color: #2563eb !important; /* Professional Blue */
-            border: none !important;
-            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2) !important;
-        }
-
-        button[kind="primary"]:hover {
-            background-color: #1d4ed8 !important;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3) !important;
-            transform: translateY(-1px);
-        }
-
-        /* 3. Secondary/Standard Buttons (Export, Cache) */
-        button[kind="secondary"] {
-            background-color: #ffffff !important;
-            border: 1px solid #e2e8f0 !important;
-            color: #475569 !important;
-        }
-
-        button[kind="secondary"]:hover {
-            border-color: #2563eb !important;
-            color: #2563eb !important;
-            background-color: #f8faff !important;
-        }
-
-        /* 4. Sidebar Button Specifics (Fixes image_96184c.png) */
-        [data-testid="stSidebar"] button {
-            width: 100% !important;
-            margin-top: 0.2rem !important;
-            margin-bottom: 0.2rem !important;
-        }
-
-        /* 5. Disabled State */
-        button:disabled {
-            background-color: #f1f5f9 !important;
-            color: #94a3b8 !important;
-            border-color: #e2e8f0 !important;
-            cursor: not-allowed !important;
-        }
-
-        
-        
     </style>
     """, unsafe_allow_html=True)
 
 def render_sidebar_header(title: str):
-    """Renders the main logo/title in the sidebar."""
     st.sidebar.markdown(f'<div class="sidebar-header">{title}</div>', unsafe_allow_html=True)
 
 def render_status_card(label: str, value: str, is_ready: bool):
-    """Renders a high-density status indicator."""
     icon = "✅" if is_ready else "⚪"
     st.sidebar.markdown(f"""
         <div class="status-card">
-            <div class="status-label">{label}</div>
-            <div class="status-value">
+            <div style="font-size: 0.55rem; font-weight: 700; color: #64748b; text-transform: uppercase;">{label}</div>
+            <div style="font-size: 0.75rem; font-weight: 600; color: #0f172a; display: flex; justify-content: space-between;">
                 <span>{value}</span>
                 <span>{icon}</span>
             </div>
@@ -312,9 +141,7 @@ def render_status_card(label: str, value: str, is_ready: bool):
     """, unsafe_allow_html=True)
 
 def render_column_header(title: str):
-    """Renders the header for the Excel and PDF columns."""
     st.markdown(f'<div class="panel-header">{title}</div>', unsafe_allow_html=True)
 
 def render_header(title: str):
-    """Renders a small breadcrumb-style header above the toolbar."""
-    st.markdown(f'<div style="font-weight:700; font-size:0.85rem; color:#475569; margin-bottom:0px;">{title}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="font-weight:700; font-size:0.8rem; color:#475569; margin-bottom:4px;">{title}</div>', unsafe_allow_html=True)
