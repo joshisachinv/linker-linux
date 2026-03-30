@@ -72,7 +72,7 @@ def apply_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
-def render_sidebar_header(title: str):
+def render_header(title):
     st.sidebar.markdown(f'<div class="sidebar-header">{title}</div>', unsafe_allow_html=True)
 
 def render_status_card(label: str, value: str, is_ready: bool):
