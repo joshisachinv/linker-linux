@@ -9,12 +9,15 @@ def display_sidebar():
         render_sidebar_header("Linker Pro")
         st.caption("Precision Evidence Linking System")
 
-        st.divider()
-
         # Files Section
-        st.subheader("📁 Data Sources")
-        excel_file = st.file_uploader("Workbook", type=["xlsx", "xlsm"], key="ex_up")
-        pdf_file = st.file_uploader("Document", type=["pdf"], key="pdf_up")
+        with st.expander(
+        "📁 Data Sources",
+        expanded=st.session_state.sources_expanded,
+            on_change="rerun",
+            key="sources_expander_widget"
+        ):
+            excel_file = st.file_uploader("Workbook", type=["xlsx", "xlsm"], key="ex_up")
+            pdf_file = st.file_uploader("Document", type=["pdf"], key="pdf_up")
 
         # System Status Cards
         render_status_card("Excel File", excel_file.name if excel_file else "Not Loaded", excel_file is not None)
