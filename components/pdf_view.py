@@ -13,7 +13,6 @@ def render_pdf_page(file_bytes, page_index, zoom):
         return pix.tobytes("png")
 
 def display_pdf_column(uploaded_file, current_page, zoom):
-    """REFACTORED: Receives parameters from Global Toolbar."""
     try:
         file_bytes = uploaded_file.getvalue()
         
