@@ -26,8 +26,7 @@ def display_pdf_column(uploaded_file):
     if uploaded_file is None:
         st.info("Upload PDF to begin.")
         return None, None
-        render_status_card("PDF File", pdf_file.name if pdf_file else "Not Loaded", pdf_file is not None)
-
+        st.info("PDF File", pdf_file.name if pdf_file else "Not Loaded", pdf_file is not None)
     try:
         file_bytes = uploaded_file.getvalue()
         total_pages = get_pdf_page_count(file_bytes)

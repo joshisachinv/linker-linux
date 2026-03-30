@@ -21,8 +21,6 @@ def display_sidebar():
 
         # System Status Cards
 
-        st.divider()
-
         # Linking Actions
         st.subheader("🔗 Actions")
         excel_ready = st.session_state.get("excel_editor") is not None
