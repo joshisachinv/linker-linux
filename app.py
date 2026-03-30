@@ -91,7 +91,6 @@ with col1:
         st.session_state["excel_editor"] = cell_event
     else:
         st.info("Upload an Excel file in the sidebar.")
-    render_panel_end()
 
 with col2:
     render_column_header("PDF Evidence")
@@ -100,7 +99,6 @@ with col2:
         st.session_state["current_page"] = current_page
     else:
         st.info("Upload a PDF file in the sidebar.")
-    render_panel_end()
 
 if st.session_state.excel_file and st.session_state.pdf_file:
     st.divider()
