@@ -188,7 +188,8 @@ def apply_custom_css():
 
         /* 1. Global Button Styling */
         button {
-            height: 12px !important;
+            height: 26px !important;       /* Reduced from default ~38px */
+            min-height: 26px !important;   /* Overrides base minimums */
             padding-top: 0px !important;
             padding-bottom: 0px !important;
             line-height: 18px !important;
@@ -196,6 +197,8 @@ def apply_custom_css():
             font-weight: 600 !important;
             border-radius: 6px !important;
             transition: all 0.2s ease !important;
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
         }
 
         /* 2. Primary Button (Finalize Link) */
@@ -212,7 +215,7 @@ def apply_custom_css():
         }
 
         /* 3. Secondary/Standard Buttons (Export, Cache) */
-                button[kind="secondary"] {
+        button[kind="secondary"] {
             background-color: #ffffff !important;
             border: 1px solid #e2e8f0 !important;
             color: #475569 !important;
