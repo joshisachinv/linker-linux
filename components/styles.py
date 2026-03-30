@@ -88,6 +88,7 @@ def apply_custom_css():
             margin-top: 0px !important;
             margin-bottom: 0px !important;
             padding: 4px 4px !important;
+            color: #2563eb
         }
         
         /* Sidebar Title Gradient */
