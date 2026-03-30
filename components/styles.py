@@ -41,7 +41,7 @@ def apply_custom_css():
             background-color: #f8faff;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 4px 4px !important;
+            padding: 2px 2px !important;
             margin-bottom: 0px !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             z-index: 1001 !important;
@@ -87,7 +87,7 @@ def apply_custom_css():
             gap: 0rem !important; 
             margin-top: 0px !important;
             margin-bottom: 0px !important;
-            padding: 4px 4px !important;
+            padding: 2px 2px !important;
             color: #2563eb
         }
         
@@ -96,7 +96,7 @@ def apply_custom_css():
             gap: 0rem !important; 
             margin-top: 0px !important;
             margin-bottom: 0px !important;
-            padding: 4px 4px !important;
+            padding: 0px 0px !important;
             color: #2563eb
         }
         /* Sidebar Title Gradient */
@@ -113,7 +113,7 @@ def apply_custom_css():
         .status-card {
             background: #ffffff;
             border-radius: 8px;
-            padding: 10px 14px;
+            padding: 4px 4px;
             border: 1px solid #f1f5f9;
             box-shadow: 0 1px 2px rgba(0,0,0,0.03);
             margin-bottom: 6px;
@@ -156,7 +156,7 @@ def apply_custom_css():
 
         /* Reduces the spacing for the text within the file uploader */
         [data-testid="stFileUploader"] section {
-            padding: 4px 8px !important; /* Tightens the 'Drag and drop' area */
+            padding: 4px 4px !important; /* Tightens the 'Drag and drop' area */
         }
 
         /* The global fix for ALL vertical spacing between sidebar elements */
@@ -192,7 +192,7 @@ def apply_custom_css():
         .stSlider {
             margin-top: -10px !important;
             margin-bottom: 0.4rem !important;
-            font-size: 0.8rem;
+            font-size: 0.4rem;
             font-weight: 600;
         }
 
@@ -310,4 +310,4 @@ def render_column_header(title: str):
 
 def render_header(title: str):
     """Renders a small breadcrumb-style header above the toolbar."""
-    st.markdown(f'<div style="font-weight:700; font-size:0.85rem; color:#475569; margin-bottom:8px;">{title}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="font-weight:700; font-size:0.85rem; color:#475569; margin-bottom:0px;">{title}</div>', unsafe_allow_html=True)
