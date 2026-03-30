@@ -41,7 +41,7 @@ def apply_custom_css():
             background-color: #f8faff;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 8px 12px !important;
+            padding: 8px 8px !important;
             margin-bottom: 10px !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             z-index: 1001 !important;
