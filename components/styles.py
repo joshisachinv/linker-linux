@@ -82,6 +82,11 @@ def apply_custom_css():
            Professional styling for the 'Setup' and 'Export' area.
            ============================================================ */
         
+        /* Forces all vertical stacks to be ultra-tight */
+        [data-testid="stSidebar"] [data-testid="stVerticalBlock"] { 
+            gap: 0rem !important; 
+        }
+        
         /* Sidebar Title Gradient */
         .sidebar-header {
             font-size: 1.4rem;
@@ -119,18 +124,22 @@ def apply_custom_css():
             align-items: center;
         }
 
-        /* Target the specific emotion cache class for dividers */
-        .st-emotion-cache-1h1td79 {
-            margin-top: 0.5rem !important;
-            margin-bottom: 0.5rem !important;
-            padding-top: 0px !important;
-            padding-bottom: 0px !important;
+        /* Reduce padding inside expanders (Data Sources) */
+        .st-emotion-cache-p5msec {
+            padding: 0.5rem 1rem !important;
+        }
+        
+        /* Targets the individual container for every widget (buttons, toggles, etc) */
+        .element-container {
+            margin-bottom: 0.2rem !important;
         }
 
-        /* Alternative: Target all dividers globally for consistency */
+        /* DIVIDER COMPRESSION */
         hr {
-            margin-top: 0.5rem !important;
-            margin-bottom: 0.5rem !important;
+            margin-top: 0.4rem !important;
+            margin-bottom: 0.4rem !important;
+            border: 0;
+            border-top: 1px solid #eee;
         }
 
         /* ============================================================
@@ -155,6 +164,19 @@ def apply_custom_css():
             color: #64748b !important;
             line-height: 1.2 !important;
         }
+
+        .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
+            height: 28px !important; /* Ultra slim */
+            font-size: 0.8rem !important;
+        }
+
+        /* Reduce size of the toggle and text in sidebar */
+        [data-testid="stSidebar"] .stCheckbox, [data-testid="stSidebar"] .stToggle {
+            padding-bottom: 0px !important;
+            margin-bottom: -5px !important;
+        }
+
+        
     </style>
     """, unsafe_allow_html=True)
 
