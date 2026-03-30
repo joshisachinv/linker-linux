@@ -4,8 +4,8 @@ import fitz
 import streamlit as st
 from PIL import Image
 from streamlit_image_coordinates import streamlit_image_coordinates
-from components.sidebar import pdf_file
 from logic.pdf_tools import draw_saved_highlights, handle_image_selection
+
 
 @st.cache_data(show_spinner=False)
 def get_pdf_page_count(file_bytes: bytes) -> int:
@@ -25,11 +25,11 @@ def display_pdf_column(uploaded_file):
     if uploaded_file is None:
         st.info("Upload PDF to begin.")
         return None, None
-        
+
     try:
         file_bytes = uploaded_file.getvalue()
         total_pages = get_pdf_page_count(file_bytes)
-        st.info("PDF File", pdf_file.name if pdf_file else "Not Loaded", pdf_file is not None)
+
         nav_col, zoom_col = st.columns([1, 2])
 
         page_num = nav_col.number_input(
