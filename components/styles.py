@@ -3,94 +3,58 @@ import streamlit as st
 def apply_custom_css():
     st.markdown("""
     <style>
-        /* 1. Global Layout Enhancements */
-        :root {
-            --primary: #3b82f6;
-            --sidebar-bg: #F8FAFC;
-            --panel-radius: 12px;
-            --header-height: 45px;
-        }
-
-        .stAppViewContainer .main .block-container {
-            padding-top: 4rem;
-            padding-bottom: 1rem;
-        }
-
-        /* 2. Modern Sidebar Header & Navigation */
-        [data-testid="stSidebarNav"] {
-            padding-top: 2rem;
-        }
+        /* 1. Remove Vertical Dead Space */
+        .block-container { padding-top: 1.5rem !important; }
+        [data-testid="stVerticalBlock"] { gap: 0.1rem !important; }
         
-        .sidebar-header {
-            font-size: 1.6rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, var(--primary), #60a5fa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
-        }
-
-        /* 3. Status Cards for Sidebar */
+        /* 2. Compact Sidebar and Status Cards */
         .status-card {
             background: white;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 8px 12px;
             border: 1px solid rgba(0, 0, 0, 0.05);
-            margin-bottom: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 5px;
         }
 
-        .status-label {
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .status-value {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #1e293b;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* 4. Panel & Column Headers */
+        /* 3. Panel Header Styling */
         .panel-header {
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--primary);
-            font-size: 0.8rem;
+            font-size: 0.7rem !important;
             font-weight: 800;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--primary);
-            padding-left: 10px;
+            color: #3b82f6;
+            text-transform: uppercase;
+            border-left: 3px solid #3b82f6;
+            padding-left: 8px;
+            margin-top: -10px;
+            margin-bottom: 5px !important;
+        }
+
+        /* 4. Shrink Widgets */
+        .stNumberInput, .stSlider, .stSelectbox { margin-top: -15px !important; }
+        
+        .sidebar-header {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
     """, unsafe_allow_html=True)
 
-def render_header(title):
+def render_sidebar_header(title):
     st.sidebar.markdown(f'<div class="sidebar-header">{title}</div>', unsafe_allow_html=True)
 
-def render_status_card(label: str, value: str, is_ready: bool):
+def render_status_card(label, value, is_ready):
     icon = "✅" if is_ready else "⚪"
     st.sidebar.markdown(f"""
         <div class="status-card">
-            <div class="status-label">{label}</div>
-            <div class="status-value">
-                <span>{value}</span>
-                <span>{icon}</span>
-            </div>
+            <div style="font-size:0.6rem; font-weight:700; color:grey;">{label}</div>
+            <div style="font-size:0.8rem; font-weight:600;">{value} {icon}</div>
         </div>
     """, unsafe_allow_html=True)
 
-def render_column_header(title: str):
+def render_column_header(title):
     st.markdown(f'<div class="panel-header">{title}</div>', unsafe_allow_html=True)
 
-def render_sidebar_header(title: str):
-    """Renders a styled header for the sidebar."""
-    st.sidebar.markdown(f'<div class="sidebar-header">{title}</div>', unsafe_allow_html=True)
-    
+def render_header(title):
+    st.markdown(f'<div style="font-weight:700; font-size:0.9rem; color:#1e293b;">{title}</div>', unsafe_allow_html=True)
