@@ -180,6 +180,66 @@ def apply_custom_css():
             margin-bottom: -5px !important;
         }
 
+
+        /* ============================================================
+        BUTTON PROPERTIES & SPACING
+        Targets all buttons to ensure a high-density, uniform look.
+        ============================================================ */
+
+        /* 1. Global Button Styling */
+        button {
+            height: 32px !important;
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+            line-height: 32px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            border-radius: 6px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        /* 2. Primary Button (Finalize Link) */
+        button[kind="primary"] {
+            background-color: #2563eb !important; /* Professional Blue */
+            border: none !important;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2) !important;
+        }
+
+        button[kind="primary"]:hover {
+            background-color: #1d4ed8 !important;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3) !important;
+            transform: translateY(-1px);
+        }
+
+        /* 3. Secondary/Standard Buttons (Export, Cache) */
+                button[kind="secondary"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #475569 !important;
+        }
+
+        button[kind="secondary"]:hover {
+            border-color: #2563eb !important;
+            color: #2563eb !important;
+            background-color: #f8faff !important;
+        }
+
+        /* 4. Sidebar Button Specifics (Fixes image_96184c.png) */
+        [data-testid="stSidebar"] button {
+            width: 100% !important;
+            margin-top: 0.2rem !important;
+            margin-bottom: 0.2rem !important;
+        }
+
+        /* 5. Disabled State */
+        button:disabled {
+            background-color: #f1f5f9 !important;
+            color: #94a3b8 !important;
+            border-color: #e2e8f0 !important;
+            cursor: not-allowed !important;
+        }
+
+        
         
     </style>
     """, unsafe_allow_html=True)
