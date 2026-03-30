@@ -23,17 +23,22 @@ defaults = {
     "editor_event": None,
     "links": {},
     "pane_ratio": 45,  # Excel width %
+    "sources_expanded": True,
 }
 for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
+# Logic to collapse if both files are present
+if st.session_state.excel_file and st.session_state.pdf_file:
+    st.session_state.sources_expanded = False
+else:
+    st.session_state.sources_expanded = True
 
 def file_sig(uploaded):
     if uploaded is None:
         return None
     return (uploaded.name, uploaded.size)
-
 
 uploaded_excel, uploaded_pdf = display_sidebar()
 
@@ -104,14 +109,8 @@ with col2:
 if "sources_expanded" not in st.session_state:
     st.session_state.sources_expanded = True
 
-# Logic to collapse if both files are present
-if st.session_state.excel_file and st.session_state.pdf_file:
-    st.session_state.sources_expanded = False
-else:
-    st.session_state.sources_expanded = True
 
 if st.session_state.excel_file and st.session_state.pdf_file:
-    st.divider()
     display_page = (current_page + 1) if current_page is not None else 1
     display_sheet = sheet_name if sheet_name else "Unknown Sheet"
     st.caption(f"Ready to link: **{display_sheet}** ↔ **Page {display_page}**")
