@@ -4,7 +4,7 @@ import fitz
 import streamlit as st
 from PIL import Image
 from streamlit_image_coordinates import streamlit_image_coordinates
-
+from components.styles import render_status_card
 from logic.pdf_tools import draw_saved_highlights, handle_image_selection
 
 
@@ -26,6 +26,7 @@ def display_pdf_column(uploaded_file):
     if uploaded_file is None:
         st.info("Upload PDF to begin.")
         return None, None
+        render_status_card("PDF File", pdf_file.name if pdf_file else "Not Loaded", pdf_file is not None)
 
     try:
         file_bytes = uploaded_file.getvalue()
