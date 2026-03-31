@@ -77,20 +77,15 @@ def render_excel_grid(df, selected_sheet: str):
         fit_columns_on_grid_load=False,
         allow_unsafe_jscode=False,
         enable_enterprise_modules=False,
-        update_mode=GridUpdateMode.SELECTION_CHANGED,
+        update_mode=GridUpdateMode.VALUE_CHANGED | GridUpdateMode.SELECTION_CHANGED | GridUpdateMode.CELL_CLICKED,
         reload_data=False,
         theme="alpine",
     )
 
-    if not grid_response:
-        st.info("Select a row in the grid to choose a cell.")
+    cell_clicked = grid_response.get("cell_clicked")
+    
+    if not cell_clicked:
+        st.info("Click any cell in the grid to select it.")
         return None
 
-    selected_rows = grid_response.get("selected_rows")
-    selected_row = _normalize_selected_row(selected_rows)
-
-    if selected_row is None:
-        st.info("Select a row in the grid to choose a cell.")
-        return None
-
-    return selected_row
+    return cell_clicked # This contains 'rowIndex' and 'column'
