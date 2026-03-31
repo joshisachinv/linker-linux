@@ -29,13 +29,23 @@ def build_selected_cell_from_row_and_column(df, sheet_name: str, selected_row):
         return None
 
     left, right = st.columns([1, 2])
+    
+    # Create a unique key for the column state
+    column_state_key = f"persistent_col_{sheet_name}"
 
+    # Initialize session state if not present
+    if column_state_key not in st.session_state:
+        st.session_state[column_state_key] = list(df.columns)[0]
+    
     with left:
         selected_column = st.selectbox(
             "Column",
             options=list(df.columns),
             key=f"selected_column_{sheet_name}",
         )
+
+    # Update the persistent state
+    st.session_state[column_state_key] = selected_column
 
     try:
         column_index = list(df.columns).index(selected_column)
