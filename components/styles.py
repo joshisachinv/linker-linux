@@ -145,3 +145,41 @@ def render_column_header(title: str):
 
 def render_header(title: str):
     st.markdown(f'<div style="font-weight:700; font-size:0.8rem; color:#475569; margin-bottom:4px;">{title}</div>', unsafe_allow_html=True)
+
+
+def apply_excel_ui_style():
+    st.markdown(
+        """
+        <style>
+        /* Make the AgGrid container look like a window */
+        .ag-theme-alpine {
+            border: 1px solid #d1d5db !important;
+            border-radius: 4px !important;
+        }
+
+        /* Style the Header cells to look like Excel (Light grey, bold) */
+        .ag-header-cell {
+            background-color: #f3f4f6 !important;
+            border-right: 1px solid #e5e7eb !important;
+        }
+        
+        .ag-header-cell-label {
+            justify-content: center;
+            font-weight: 600 !important;
+            color: #4b5563 !important;
+        }
+
+        /* High-density grid lines */
+        .ag-row {
+            border-bottom: 1px solid #f3f4f6 !important;
+        }
+
+        /* Tighten the spacing around the grid */
+        [data-testid="stVerticalBlock"] > div {
+            margin-top: 0.1rem !important;
+            margin-bottom: 0.1rem !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )

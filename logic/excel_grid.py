@@ -14,22 +14,26 @@ def _build_grid_options(df_display):
     gb.configure_default_column(
         editable=False,
         resizable=True,
-        sortable=False,
-        filter=False,
+        sortable=True,
+        filter=True,
         wrapText=False,
+        width=100, 
+        minWidth=50,
     )
 
     gb.configure_column(
         ROW_COL_NAME,
         header_name="",
         pinned="left",
-        width=42,
+        width=50,
         editable=False,
+        cellStyle={'backgroundColor': '#f8f9fa', 'fontWeight': 'bold'}
     )
 
     gb.configure_grid_options(
         suppressRowClickSelection=False,
         rowSelection="single",
+        domLayout='normal',
     )
 
     return gb.build()
@@ -77,7 +81,7 @@ def render_excel_grid(df, selected_sheet: str):
         enable_enterprise_modules=False,
         update_mode=GridUpdateMode.SELECTION_CHANGED,
         reload_data=False,
-        theme="streamlit",
+        theme="alpine",
     )
 
     if not grid_response:
