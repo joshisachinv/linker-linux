@@ -68,8 +68,6 @@ def _normalize_selected_row(selected_rows):
 def render_excel_grid(df, selected_sheet: str):
     df_display = add_row_numbers(df)
 
-    st.caption("Select a row, then choose a column below.")
-
     grid_response = AgGrid(
         df_display,
         gridOptions=_build_grid_options(df_display),
