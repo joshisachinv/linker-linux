@@ -1,13 +1,12 @@
 import pandas as pd
 import streamlit as st
-
 from logic.excel_helpers import ROW_COL_NAME
-
 
 def build_selected_cell_from_row_and_column(df, sheet_name: str, selected_row):
     if selected_row is None:
         return None
 
+    # Normalizing selected_row
     if isinstance(selected_row, pd.DataFrame):
         if selected_row.empty:
             return None
@@ -20,35 +19,45 @@ def build_selected_cell_from_row_and_column(df, sheet_name: str, selected_row):
         st.warning(f"Unexpected row selection type: {type(selected_row).__name__}")
         return None
 
+    # Resolve row index
     row_number_1_based = selected_row.get(ROW_COL_NAME, 1)
-
     try:
         row_index = max(0, int(row_number_1_based) - 1)
     except Exception:
         st.warning(f"Could not parse selected row: {row_number_1_based}")
         return None
 
-    left, right = st.columns([1, 2])
-    
-    # Create a unique key for the column state
+    # --- Persistent State Logic ---
     column_state_key = f"persistent_col_{sheet_name}"
+    all_columns = list(df.columns)
 
-    # Initialize session state if not present
+    # 1. Initialize session state if it's the first run
     if column_state_key not in st.session_state:
-        st.session_state[column_state_key] = list(df.columns)[0]
+        st.session_state[column_state_key] = all_columns[0]
+
+    # 2. Determine the correct index to show in the dropdown
+    # This prevents it from defaulting to 0 (Column A) on every refresh
+    try:
+        current_selection_index = all_columns.index(st.session_state[column_state_key])
+    except ValueError:
+        current_selection_index = 0
+
+    left, right = st.columns([1, 2])
     
     with left:
         selected_column = st.selectbox(
             "Column",
-            options=list(df.columns),
-            key=f"selected_column_{sheet_name}",
+            options=all_columns,
+            index=current_selection_index, # Critical: Force dropdown to the saved column
+            key=f"selected_column_widget_{sheet_name}",
         )
 
-    # Update the persistent state
+    # 3. Update the persistent state immediately after user interaction
     st.session_state[column_state_key] = selected_column
 
+    # Resolve cell coordinates
     try:
-        column_index = list(df.columns).index(selected_column)
+        column_index = all_columns.index(selected_column)
         cell_value = df.iloc[row_index, column_index]
     except Exception as exc:
         st.warning(f"Could not resolve selected cell: {type(exc).__name__}: {exc}")
