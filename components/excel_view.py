@@ -4,7 +4,7 @@ import streamlit as st
 from logic.links_store import try_load_embedded_links
 from logic.excel_helpers import get_visible_sheets, prepare_display_dataframe
 from logic.excel_grid import render_excel_grid
-from logic.excel_selection import build_selected_cell_from_row_and_column
+from logic.excel_selection import build_selected_cell_from_click
 from components.styles import render_status_card
 
 def display_excel_column(uploaded_file):
@@ -38,7 +38,7 @@ def display_excel_column(uploaded_file):
 
         df = prepare_display_dataframe(excel_data[selected_sheet])
         selected_row = render_excel_grid(df, selected_sheet)
-        selected_cell = build_selected_cell_from_row_and_column(df, selected_sheet, selected_row)
+        selected_cell = build_selected_cell_from_click(df, selected_sheet, selected_row)
 
         return selected_sheet, selected_cell
 
