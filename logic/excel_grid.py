@@ -77,7 +77,7 @@ def render_excel_grid(df, selected_sheet: str):
         fit_columns_on_grid_load=False,
         allow_unsafe_jscode=False,
         enable_enterprise_modules=False,
-        update_mode=GridUpdateMode.VALUE_CHANGED | GridUpdateMode.SELECTION_CHANGED | GridUpdateMode.CELL_CLICKED,
+        update_mode=GridUpdateMode.VALUE_CHANGED | GridUpdateMode.SELECTION_CHANGED, 
         reload_data=False,
         theme="alpine",
     )
@@ -88,4 +88,4 @@ def render_excel_grid(df, selected_sheet: str):
         st.info("Click any cell in the grid to select it.")
         return None
 
-    return cell_clicked # This contains 'rowIndex' and 'column'
+    return cell_clicked 

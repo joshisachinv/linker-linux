@@ -122,6 +122,29 @@ def apply_custom_css():
             margin-top: 0.4rem !important;
             margin-bottom: 0.4rem !important;
         }
+        
+
+        /* Force high-density spacing */
+        [data-testid="stVerticalBlock"] > div {
+            margin-top: 0.1rem !important;
+            margin-bottom: 0.1rem !important;
+        }
+
+        /* Style success message as a professional status bar */
+        div.stAlert {
+            padding: 0.4rem 1rem !important;
+            background-color: #ffffff !important;
+            border: 1px solid #e0e0e0 !important;
+            color: #1f2937 !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+        }
+    
+        /* Ensure the grid looks like a spreadsheet */
+        .ag-theme-alpine {
+            --ag-grid-size: 3px;
+            --ag-header-background-color: #f8f9fa;
+        } 
+        
     </style>
     """, unsafe_allow_html=True)
 
