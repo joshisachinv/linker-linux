@@ -28,12 +28,14 @@ def render_toolbar():
         return
 
     render_header("Excel ↔ PDF Linker")
-    toolbar_cols = st.columns([2, 2.5, 2, 2, 1.5], gap="small")
 
+    toolbar_cols = st.columns([2, 2.5, 1.6, 1.6, 1.5], gap="small")
+
+    # ── Finalize Link Button ──────────────────────────────────────────────────
     with toolbar_cols[0]:
         if st.button("🔗 Finalize Link", type="primary", use_container_width=True):
             excel_editor = st.session_state.get("excel_editor")
-            pdf_file = st.session_state.get("pdf_file")
+            pdf_file     = st.session_state.get("pdf_file")
             current_page = st.session_state.get("current_page", 0)
 
             if excel_editor is None:
@@ -47,6 +49,7 @@ def render_toolbar():
                 except Exception as e:
                     st.error(f"Failed to finalize link: {e}")
 
+    # ── Sheet Selector ────────────────────────────────────────────────────────
     with toolbar_cols[1]:
         excel_file = st.session_state.get("excel_file")
         if excel_file is not None:
@@ -59,7 +62,6 @@ def render_toolbar():
                         if current_sheet in display_sheets
                         else 0
                     )
-
                     st.session_state.selected_sheet = st.selectbox(
                         "Sheet",
                         options=display_sheets,
@@ -68,34 +70,44 @@ def render_toolbar():
                         key="toolbar_sheet_selector",
                     )
                 else:
-                    st.warning("No visible sheets found in the workbook.")
+                    st.warning("No visible sheets found.")
             except Exception as e:
-                st.error(f"Failed to read workbook sheets: {e}")
+                st.error(f"Failed to read sheets: {e}")
+        else:
+            st.markdown(
+                "<div style='font-size:0.72rem;color:#94a3b8;"
+                "padding:6px 0;'>No workbook loaded</div>",
+                unsafe_allow_html=True,
+            )
 
+    # ── Page Number ───────────────────────────────────────────────────────────
     with toolbar_cols[2]:
-        max_page = max(1, st.session_state.get("pdf_page_count", 1))
+        max_page     = max(1, st.session_state.get("pdf_page_count", 1))
         current_page = min(st.session_state.get("current_page", 0), max_page - 1)
-
-        page_input = st.number_input(
+        page_input   = st.number_input(
             "Page",
             min_value=1,
             max_value=max_page,
             value=current_page + 1,
             step=1,
             label_visibility="collapsed",
+            help=f"PDF page (1 of {max_page})",
         )
         st.session_state.current_page = page_input - 1
 
+    # ── Zoom Slider ───────────────────────────────────────────────────────────
     with toolbar_cols[3]:
         st.session_state.pdf_zoom = st.slider(
             "Zoom",
             min_value=1.0,
             max_value=4.0,
             value=float(st.session_state.get("pdf_zoom", 2.0)),
-            step=0.1,
+            step=0.25,
             label_visibility="collapsed",
+            help="PDF zoom level",
         )
 
+    # ── Split Slider ──────────────────────────────────────────────────────────
     with toolbar_cols[4]:
         st.session_state.pane_ratio = st.slider(
             "Split",
@@ -104,18 +116,63 @@ def render_toolbar():
             value=int(st.session_state.get("pane_ratio", 50)),
             step=5,
             label_visibility="collapsed",
+            help="Adjust the Excel / PDF panel split",
         )
+
+
+def _render_toolbar_hints():
+    """Render small contextual hints below the toolbar."""
+    excel_editor = st.session_state.get("excel_editor")
+    active_rect  = st.session_state.get("active_rect")
+
+    cell_status = (
+        f"<span style='color:#16a34a;'>✔ Cell selected</span>"
+        if excel_editor
+        else "<span style='color:#94a3b8;'>○ No cell selected</span>"
+    )
+    rect_status = (
+        f"<span style='color:#16a34a;'>✔ Area drawn</span>"
+        if active_rect
+        else "<span style='color:#94a3b8;'>○ No area drawn</span>"
+    )
+    link_count = len(st.session_state.get("links", {}))
+    link_badge = (
+        f"<span style='background:#2563eb;color:white;padding:1px 7px;"
+        f"border-radius:10px;font-size:0.65rem;font-weight:700;'>{link_count} link{'s' if link_count != 1 else ''}</span>"
+        if link_count > 0
+        else "<span style='color:#cbd5e1;font-size:0.68rem;'>0 links</span>"
+    )
+
+    st.markdown(f"""
+        <div style="
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 3px 4px 8px;
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: #64748b;
+        ">
+            {cell_status} &nbsp;·&nbsp; {rect_status} &nbsp;·&nbsp; {link_badge}
+        </div>
+    """, unsafe_allow_html=True)
 
 
 def render_main_view():
     excel_ratio = st.session_state.get("pane_ratio", 50)
-    pdf_ratio = 100 - excel_ratio
+    pdf_ratio   = 100 - excel_ratio
 
     left_col, right_col = st.columns([excel_ratio, pdf_ratio], gap="small")
 
+    # ── Excel Panel ───────────────────────────────────────────────────────────
     with left_col:
-        render_column_header("📊 Excel")
         excel_file = st.session_state.get("excel_file")
+        page_count = st.session_state.get("pdf_page_count", 1)
+
+        render_column_header(
+            "📊 Excel",
+            subtitle=excel_file.name if excel_file else "",
+        )
 
         if excel_file is not None:
             try:
@@ -126,19 +183,56 @@ def render_main_view():
             except Exception as e:
                 st.error(f"Failed to load Excel view: {e}")
         else:
-            st.info("Upload an Excel file to begin.")
+            _render_empty_panel(
+                "📊",
+                "No workbook loaded",
+                "Upload an Excel file in the sidebar to begin.",
+            )
 
+    # ── PDF Panel ─────────────────────────────────────────────────────────────
     with right_col:
-        render_column_header("📄 PDF")
-        pdf_file = st.session_state.get("pdf_file")
+        pdf_file     = st.session_state.get("pdf_file")
+        current_page = st.session_state.get("current_page", 0)
+        zoom         = st.session_state.get("pdf_zoom", 2.0)
+        page_count   = st.session_state.get("pdf_page_count", 1)
+
+        render_column_header(
+            "📄 PDF",
+            subtitle=f"Page {current_page + 1} of {page_count}" if pdf_file else "",
+        )
 
         if pdf_file is not None:
             try:
-                display_pdf_column(pdf_file)
+                display_pdf_column(pdf_file, current_page, zoom)
             except Exception as e:
                 st.error(f"Failed to load PDF view: {e}")
         else:
-            st.info("Upload a PDF file to begin.")
+            _render_empty_panel(
+                "📄",
+                "No document loaded",
+                "Upload a PDF file in the sidebar to begin.",
+            )
+
+
+def _render_empty_panel(icon: str, title: str, subtitle: str):
+    st.markdown(f"""
+        <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 420px;
+            background: #f8fafc;
+            border: 1.5px dashed #e2e8f0;
+            border-radius: 12px;
+            gap: 8px;
+            color: #94a3b8;
+        ">
+            <div style="font-size: 2rem; opacity: 0.5;">{icon}</div>
+            <div style="font-size: 0.82rem; font-weight: 600; color: #64748b;">{title}</div>
+            <div style="font-size: 0.72rem;">{subtitle}</div>
+        </div>
+    """, unsafe_allow_html=True)
 
 
 def main():
@@ -150,6 +244,7 @@ def main():
     update_expander_state()
 
     render_toolbar()
+    _render_toolbar_hints()
     render_main_view()
 
 
