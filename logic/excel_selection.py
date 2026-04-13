@@ -14,8 +14,11 @@ def build_selected_cell_from_click(df, sheet_name: str, cell_clicked):
         return None
 
     try:
-        cell_value = df.iloc[row_index, list(df.columns).index(column_name)]
-        column_index = list(df.columns).index(column_name)
+        cols = list(df.columns)
+        if column_name not in cols:
+            return None
+        column_index = cols.index(column_name)
+        cell_value = df.iloc[row_index, column_index]
     except Exception:
         return None
 

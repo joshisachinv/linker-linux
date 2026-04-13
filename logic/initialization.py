@@ -9,7 +9,6 @@ def initialize_session_state():
         "current_page": 0,
         "pdf_zoom": 2.0,
         "full_screen_mode": False,
-        "editor_event": None,
         "links": {},
         "pane_ratio": 45,
         "sources_expanded": True,

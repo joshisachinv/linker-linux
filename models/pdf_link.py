@@ -44,8 +44,9 @@ class PdfLink:
                 cell_ref=d.get("cell_ref"),
             )
 
-        except Exception:
-            # Safe fallback
+        except Exception as e:
+            import streamlit as st
+            st.warning(f"⚠️ Could not load a saved link — it may be corrupted: {e}")
             return PdfLink(
                 pdf_path="Unknown.pdf",
                 page_index=0,

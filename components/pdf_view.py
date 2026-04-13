@@ -67,7 +67,7 @@ def _render_pdf_image(file_bytes: bytes, current_page: int, zoom: float) -> tupl
     return bg_img, safe_page_index, page_count
 
 
-def display_pdf_column(uploaded_file, current_page: int, zoom: float) -> tuple[int | None, int | None]:
+def display_pdf_column(uploaded_file, current_page: int = 0, zoom: float = 2.0) -> tuple[int | None, int | None]:
     """
     Render the PDF viewer and process user selections.
 
