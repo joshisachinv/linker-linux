@@ -5,7 +5,7 @@ from logic.links_store import try_load_embedded_links
 from logic.excel_helpers import get_visible_sheets, prepare_display_dataframe
 from logic.excel_grid import render_excel_grid
 from logic.excel_selection import build_selected_cell_from_click
-from components.styles import render_status_card
+
 
 def display_excel_column(uploaded_file):
     if uploaded_file is None:
@@ -16,8 +16,8 @@ def display_excel_column(uploaded_file):
             uploaded_file.seek(0)
         excel_data = pd.read_excel(uploaded_file, sheet_name=None, header=None)
 
+        # Load embedded links quietly
         try:
-            render_status_card("Excel File", uploaded_file.name if uploaded_file else "Not Loaded", uploaded_file is not None)
             if hasattr(uploaded_file, "seek"):
                 uploaded_file.seek(0)
             st.session_state["embedded_links"] = try_load_embedded_links(uploaded_file)
@@ -30,11 +30,12 @@ def display_excel_column(uploaded_file):
             st.warning("No visible sheets found in this workbook.")
             return None, None
 
-        selected_sheet = st.selectbox(
-            "Select Sheet",
-            options=display_sheets,
-            key="selected_excel_sheet",
-        )
+        # Use the sheet already selected by the toolbar if available,
+        # otherwise fall back to the first sheet — NO second selectbox here.
+        selected_sheet = st.session_state.get("selected_sheet") or display_sheets[0]
+        if selected_sheet not in display_sheets:
+            selected_sheet = display_sheets[0]
+        st.session_state["selected_sheet"] = selected_sheet
 
         df = prepare_display_dataframe(excel_data[selected_sheet])
         selected_row = render_excel_grid(df, selected_sheet)
