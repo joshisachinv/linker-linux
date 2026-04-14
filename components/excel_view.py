@@ -16,7 +16,6 @@ def display_excel_column(uploaded_file):
             uploaded_file.seek(0)
         excel_data = pd.read_excel(uploaded_file, sheet_name=None, header=None)
 
-        # Load embedded links quietly
         try:
             if hasattr(uploaded_file, "seek"):
                 uploaded_file.seek(0)
@@ -30,16 +29,15 @@ def display_excel_column(uploaded_file):
             st.warning("No visible sheets found in this workbook.")
             return None, None
 
-        # Use the sheet already selected by the toolbar if available,
-        # otherwise fall back to the first sheet — NO second selectbox here.
+        # Read sheet chosen by toolbar — no second selectbox
         selected_sheet = st.session_state.get("selected_sheet") or display_sheets[0]
         if selected_sheet not in display_sheets:
             selected_sheet = display_sheets[0]
         st.session_state["selected_sheet"] = selected_sheet
 
         df = prepare_display_dataframe(excel_data[selected_sheet])
-        selected_row = render_excel_grid(df, selected_sheet)
-        selected_cell = build_selected_cell_from_click(df, selected_sheet, selected_row)
+        cell_clicked = render_excel_grid(df, selected_sheet)
+        selected_cell = build_selected_cell_from_click(df, selected_sheet, cell_clicked)
 
         return selected_sheet, selected_cell
 
