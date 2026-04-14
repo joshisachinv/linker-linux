@@ -167,7 +167,6 @@ def render_main_view():
     # ── Excel Panel ───────────────────────────────────────────────────────────
     with left_col:
         excel_file = st.session_state.get("excel_file")
-        page_count = st.session_state.get("pdf_page_count", 1)
 
         render_column_header(
             "📊 Excel",
@@ -182,18 +181,15 @@ def render_main_view():
                 st.session_state.excel_editor = cell_event
             except Exception as e:
                 st.error(f"Failed to load Excel view: {e}")
+                import traceback
+                st.text(traceback.format_exc())
         else:
-            _render_empty_panel(
-                "📊",
-                "No workbook loaded",
-                "Upload an Excel file in the sidebar to begin.",
-            )
+            st.info("Upload an Excel file in the sidebar to begin.")
 
     # ── PDF Panel ─────────────────────────────────────────────────────────────
     with right_col:
         pdf_file     = st.session_state.get("pdf_file")
         current_page = st.session_state.get("current_page", 0)
-        zoom         = st.session_state.get("pdf_zoom", 2.0)
         page_count   = st.session_state.get("pdf_page_count", 1)
 
         render_column_header(
@@ -208,29 +204,10 @@ def render_main_view():
                 display_pdf_column(pdf_file, current_page, pdf_zoom)
             except Exception as e:
                 st.error(f"Failed to load PDF view: {e}")
+                import traceback
+                st.text(traceback.format_exc())
         else:
-            st.info("Upload a PDF file to begin.")
-
-
-def _render_empty_panel(icon: str, title: str, subtitle: str):
-    st.markdown(f"""
-        <div style="
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 420px;
-            background: #f8fafc;
-            border: 1.5px dashed #e2e8f0;
-            border-radius: 12px;
-            gap: 8px;
-            color: #94a3b8;
-        ">
-            <div style="font-size: 2rem; opacity: 0.5;">{icon}</div>
-            <div style="font-size: 0.82rem; font-weight: 600; color: #64748b;">{title}</div>
-            <div style="font-size: 0.72rem;">{subtitle}</div>
-        </div>
-    """, unsafe_allow_html=True)
+            st.info("Upload a PDF file in the sidebar to begin.")
 
 
 def main():
